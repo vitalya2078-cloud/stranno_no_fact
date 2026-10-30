@@ -16,8 +16,8 @@ A=f"{ROOT}/assets/S01E01_smena"; FONTS=f"{ROOT}/fonts"; ASR=f"{ROOT}/../models/v
 rd=lambda p: cv2.imread(f"{A}/{p}")
 L=lambda n: load_line(f"{ldir}/{n}.wav")
 subs=Subs(FONTS); voice=[]; fx=[]          # (время, сигнал) — для сведения
-def say(t0, a, text, who):
-    voice.append((t0,a)); subs.add(t0,t0+len(a)/SR,text); return t0+len(a)/SR
+def say(t0, a, text, who, sub_bottom=None):
+    voice.append((t0,a)); subs.add(t0,t0+len(a)/SR,text,sub_bottom); return t0+len(a)/SR
 def sound(t0, a, gain_db): fx.append((t0,a*10**(gain_db/20)))
 dur=lambda a: len(a)/SR
 # ---------- картинки ----------
@@ -99,26 +99,26 @@ def prerender(name):
     a,sr=sf.read(f"{pdir}/{name}.wav",dtype="float32"); a=librosa.resample(a,orig_sr=sr,target_sr=SR) if sr!=SR else a
     a=a/np.sqrt(np.mean(a[np.abs(a)>1e-3]**2))*10**(-20/20); voice.append((T,a)); T+=n/FPS
 # 1. Часы: 23:59, стрелка дёргается к 12 и отскакивает. Марк з/к.
-m01=L("mark01"); t_jump=0.5; d1=0.7+dur(m01)+0.6; marks["1"]=T
+m01=L("mark01"); t_jump=0.4; d1=0.5+dur(m01)+0.5; marks["1"]=T
 sound(T+t_jump,sfx.ratchet_back(),-14)
 def s1(t):
     md=354.0; j=t-t_jump
     if 0<=j<0.25: md=354+6*math.sin(math.pi*min(j/0.08,1)/2) if j<0.08 else 360-6*(1-math.exp(-(j-0.08)/0.03))
     md+=1.2*math.exp(-max(0,j-0.25)/0.08)*math.sin(max(0,j-0.25)*60) if j>0.25 else 0
     return clock_img(md,359.5,1+0.04*t/d1)
-say(T+0.7,m01,"Ночная смена. Дело номер один.","MARK"); run(int(d1*FPS),s1)
+say(T+0.5,m01,"Ночная смена. Дело номер один.","MARK"); run(int(d1*FPS),s1)
 # 2. Марк читает жалобу (готовый кадр).
 marks["2"]=T; sound(T+0.2,sfx.paper(0.5),-24); prerender("shot02")
 # 3–4. Чернила, Клякс-лужица (готовый кадр).
 marks["3"]=T; sound(T+0.45,sfx.splash(),-16); sound(T+2.1,sfx.blink_wet(),-30); prerender("shot34")
 # 5. Пустая кружка. Пауза, затем Марк з/к.
-m05=L("mark05"); d5=1.1+dur(m05)+0.5; marks["5"]=T
+m05=L("mark05"); d5=0.85+dur(m05)+0.4; marks["5"]=T
 MUG=DESK[100:620,560:864]
 def s5(t): return fill_frame(MUG,(0.5,0.45),1+0.05*t/d5)
-say(T+1.1,m05,"Это рабочий вопрос.","MARK"); run(int(d5*FPS),s5)
+say(T+0.85,m05,"Это рабочий вопрос.","MARK"); run(int(d5*FPS),s5)
 # 6. Клякс-капля крупно, Марк размыт сзади: перечисляет; «И?»; тихо «…пока…».
 k03,m06,k04=L("kly03"),L("mark06"),L("kly04")
-t1=0.3; t2=t1+dur(k03)+0.25; t3=t2+dur(m06)+0.3; d6=t3+dur(k04)+0.7; marks["6"]=T
+t1=0.3; t2=t1+dur(k03)+0.25; t3=t2+dur(m06)+0.3; d6=t3+dur(k04)+0.55; marks["6"]=T
 VIS6=[(t1,visemes(k03,SR,FPS,scale=1.17)),(t3,visemes(k04,SR,FPS,scale=1.17))]
 MB=cv2.GaussianBlur(MARK1,(0,0),9); MBA=cv2.GaussianBlur(MARK1A,(0,0),9)
 def s6(t):
@@ -127,14 +127,14 @@ def s6(t):
     blink=1.0 if (t1+dur(k03)+0.1)<=t<(t1+dur(k03)+0.2) else 0.0
     a=kly_face(KS,KA,v if serious<0.5 else ["X",0],blink,t); b=kly_face(KQ,KQA,v if serious>=0.5 else ["X",0],blink,t)
     sq=1+0.02*math.sin(2*math.pi*0.5*t)+(0.04*v[1] if v[0]!="X" else 0)-0.06*min(1,max(0,(t-(t3+dur(k04)-0.3))/0.3))
-    sc=0.82; kw=int(1024*sc/sq**0.5); kh=int(1024*sc*sq)
+    sc=0.66; kw=int(1024*sc/sq**0.5); kh=int(1024*sc*sq)
     for img_k,al,wgt in ((a,KA,1-serious),(b,KQA,serious)):
         if wgt<=0: continue
         kk=cv2.resize(img_k,(kw,kh)); aa=(cv2.resize(al,(kw,kh)).astype(np.float32)*wgt).astype(np.uint8)
-        img=paste(img,kk,aa,(W-kw)//2,1560-kh,1.0)
+        img=paste(img,kk,aa,(W-kw)//2,1700-kh,1.0)
     z=1+0.03*t/d6+0.03*max(0,min(1,(t-t3)/1.5)); return fill_frame(np.clip(img,0,255).astype(np.uint8),(0.5,0.75),z)
-say(T+t1,k03,"Ты уже ломал часы. Уходил домой. Звонил начальству.","KLY"); say(T+t2,m06,"И?","MARK")
-say(T+t3,k04,"И опять сидишь здесь. Ночь не кончится, пока...","KLY"); run(int(d6*FPS),s6)
+say(T+t1,k03,"Ты уже ломал часы. Уходил домой. Звонил начальству.","KLY",760); say(T+t2,m06,"И?","MARK",760)
+say(T+t3,k04,"И опять сидишь здесь. Ночь не кончится, пока...","KLY",760); run(int(d6*FPS),s6)
 # 7. Журнал смен крупно: «Смену сдал: М.», пустая графа. Марк з/к.
 m07a,m07b=L("mark07a"),L("mark07b"); d7=0.4+dur(m07a)+0.6+dur(m07b)+0.5; marks["7"]=T
 LB=logbook(0.0); sound(T+0.1,sfx.paper(0.7),-24)
@@ -158,8 +158,9 @@ k05,m08=L("kly05"),L("mark08"); t1=0.4; t2=t1+dur(k05)+0.35; d9=t2+dur(m08)+0.5;
 VIS9K=[(t1,visemes(k05,SR,FPS,scale=1.17))]; VIS9M=[(t2,visemes(m08,SR,FPS))]
 def office_mark(t, vis, up=0.0):
     img=OFF.astype(np.float32).copy(); fr=M3.frame(vis)
-    if up>0: fr=(fr*(1-up)+M3UP*up).astype(np.uint8)
-    breath=1+0.006*math.sin(2*math.pi*0.25*t); img=paste(img,fr,M3.alpha,170,int(330-20*(breath-1)*100),1.05)
+    al=M3.alpha
+    if up>0: fr=M3UP; al=M3UPA                         # своя альфа: у позы «взгляд вверх» другой силуэт волос
+    breath=1+0.006*math.sin(2*math.pi*0.25*t); img=paste(img,fr,al,170,int(330-20*(breath-1)*100),1.05)
     return img
 def s9(t):
     img=office_mark(t,vis_at(VIS9M,t)); v=vis_at(VIS9K,t)
@@ -179,16 +180,16 @@ from emphasis import words
 ws=words(m10,SR,"Ладно. Теперь это моя смена.",ASR); cut=[e for w,s,e in ws if w=="ладно"]
 cut=cut[0]+0.05 if cut else dur(m10)*0.3
 p1,p2=m10[:int(cut*SR)],m10[int(cut*SR):]; p2=librosa.effects.trim(p2,top_db=40)[0]
-d11a=0.3+dur(p1)+0.7; d11=d11a+dur(p2)+0.9; marks["11"]=T
+d11a=0.3+dur(p1)+0.55; d11=d11a+dur(p2)+0.6; marks["11"]=T
 VIS11=[(0.3,visemes(p1,SR,FPS))]
 def s11(t):
     if t<d11a:
-        up=min(1,max(0,(t-(0.3+dur(p1)+0.15))/0.12))
+        up=1.0 if t>=0.3+dur(p1)+0.15 else 0.0          # смена позы резко: плавный переход двоит голову
         return fill_frame(np.clip(office_mark(t,vis_at(VIS11,t),up),0,255).astype(np.uint8),(0.5,0.6),1.03)
     j=t-d11a; return clock_img(6.0,0.5,1+0.03*j)
 say(T+0.3,p1,"Ладно.","MARK"); say(T+d11a+0.2,p2,"Теперь это моя смена.","MARK"); run(int(d11*FPS),s11)
 # 12. Титр.
-d12=1.8; marks["12"]=T
+d12=1.5; marks["12"]=T
 def s12(t):
     im=Image.new("RGB",(W,H),(18,14,34)); d=ImageDraw.Draw(im); a=min(1,t/0.3)*min(1,(d12-t)/0.4)
     d.text((W/2,H/2),"Дело № 001 закрыто",font=mono,fill=tuple(int(c*a) for c in (240,232,214)),anchor="mm"); return im

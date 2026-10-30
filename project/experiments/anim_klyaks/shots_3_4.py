@@ -13,8 +13,8 @@ from emphasis import words, emphasize
 W,H,FPS=1080,1920,30
 CLEAN=__import__('os').environ.get('CLEAN')=='1'   # без служебных подписей (для монтажа)
 # ---------- реплики и логическое ударение ----------
-LINES=[("kly01","Опять ты.",["опять"],[]),("mark04","Мы знакомы?",[],[]),
-       ("kly02","Раз триста — сейчас спросишь, где кофе.",["триста","кофе"],["раз","сейчас","спросишь","где"])]
+LINES=[("kly01","Опять ты.",[],[]),("mark04","Мы знакомы?",[],[]),
+       ("kly02","Раз триста — сейчас спросишь, где кофе.",[],[])]   # ударение уже выправлено в одобренном образце
 aud={}
 for n,txt,em,fl in LINES:
     a,sr=sf.read(f"{ldir}/{n}.wav",dtype="float32"); a=a if a.ndim==1 else a.mean(1)
@@ -126,7 +126,7 @@ for i in range(int(TOTAL*FPS)):
             img=place_kly(img,k,a.astype(np.uint8),PUD_C,PUD_S,sq*bounce)
         frame=cv2.resize(np.clip(img,0,255).astype(np.uint8),(W,H),interpolation=cv2.INTER_CUBIC)
         shake=6*math.exp(-((t-SPILL[0])/0.07)**2)*math.sin(t*90)         # толчок: Марк задел чернильницу
-        z=1+0.05*t/CUT; cw,ch=int(W/z),int(H/z); cx=(W-cw)//2+int(shake); cy=int((H-ch)*0.45)
+        z=1.02+0.05*t/CUT; cw,ch=int(W/z),int(H/z); cx=min(max(0,(W-cw)//2+int(shake)),W-cw); cy=int((H-ch)*0.45)   # запас 2% под тряску
         frame=cv2.resize(frame[cy:cy+ch,cx:cx+cw],(W,H),interpolation=cv2.INTER_CUBIC)
     else:       # ---- кадр 4: крупно ----
         u=(t-CUT)/(TOTAL-CUT); Z=3*(1+0.06*u)                          # медленный наезд

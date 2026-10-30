@@ -65,16 +65,16 @@ def fill_frame(img, focus=(0.5,0.5), zoom=1.0):
 class Subs:
     def __init__(self, fontdir, bottom=1300):
         self.f=ImageFont.truetype(f"{fontdir}/PTSans-Bold.ttf",66); self.bottom=bottom; self.items=[]
-    def add(self, t0, t1, text): self.items.append((t0,t1,text))
+    def add(self, t0, t1, text, bottom=None): self.items.append((t0,t1,text,bottom or self.bottom))
     def draw(self, pil, t):
         cur=[s for s in self.items if s[0]-0.05<=t<=s[1]+0.15]
         if not cur: return
-        d=ImageDraw.Draw(pil); words=cur[-1][2].split(); lines=[""]
+        d=ImageDraw.Draw(pil); words=cur[-1][2].split(); lines=[""]; bottom=cur[-1][3]
         for w in words:
             n=(lines[-1]+" "+w).strip()
             if d.textlength(n,font=self.f)>920 and lines[-1]: lines.append(w)
             else: lines[-1]=n
-        lh=84; y0=self.bottom-lh*len(lines)
+        lh=84; y0=bottom-lh*len(lines)
         for j,ln in enumerate(lines): d.text((W/2,y0+j*lh+lh/2),ln,font=self.f,fill=(245,238,220),anchor="mm",stroke_width=5,stroke_fill=(10,8,20))
 class Writer:
     """Кадры в mp4 без звука (звук сводится отдельно)."""
