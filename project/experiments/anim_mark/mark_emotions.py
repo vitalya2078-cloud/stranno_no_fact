@@ -106,24 +106,51 @@ def compose(tt):
         if v[0]!="X": q=q*(1-MM_PUZ)+M_PUZ[SHAPE2MOUTH[v[0]]]*MM_PUZ
         img=img*(1-puzzle)+q*puzzle; alpha=alpha*(1-puzzle)+A_PUZ*puzzle
     return np.clip(img,0,255).astype(np.uint8), alpha.astype(np.uint8), v
-# ---------- взгляд: сдвиг радужки внутри глаза (контур и ресницы на месте) ----------
-EYE_BASE=[(372,557,48,36),(507,545,50,34)]; EYE_PUZ=[(408,530,48,34),(548,490,50,34)]
-def _eye_weight(eyes):
-    w=np.zeros((h0,w0),np.float32)
+# ---------- взгляд: содержимое разреза глаза сдвигается целиком (без растяжения), края — цветом белка ----------
+EYE_BASE=[(375,560,30,22),(508,538,36,23)]; EYE_PUZ=[(400,527,33,24),(545,490,37,26)]   # разрез глаза (белок)
+def _eye_masks(eyes):
+    out=[]
     for cx,cy,rx,ry in eyes:
-        r=np.sqrt(((xx-cx)/rx)**2+((yy-cy)/ry)**2); u=np.clip((0.92-r)/0.4,0,1); w=np.maximum(w,u*u*(3-2*u))
-    return w
-def gaze_warp(img, eyes_w, dx, dy):
-    if abs(dx)<0.2 and abs(dy)<0.2: return img
-    return cv2.remap(img,(xx-dx*eyes_w).astype(np.float32),(yy-dy*eyes_w).astype(np.float32),cv2.INTER_LINEAR)
+        m=np.zeros((h0,w0),np.float32); cv2.ellipse(m,(cx,cy),(rx,ry),0,0,360,1.0,-1)
+        hard=m.copy(); soft=cv2.GaussianBlur(cv2.erode(m,np.ones((3,3),np.uint8)),(0,0),1.2)
+        out.append((cx,cy,rx,ry,hard,soft))
+    return out
+def gaze_shift(img, eyes, dx, dy):
+    """Двигается только радужка: находим её (компактное тёмное пятно в разрезе, тонкие линии век отсеиваются),
+    закрашиваем место цветом белка и кладём радужку со сдвигом — только внутри разреза (белок + радужка)."""
+    if abs(dx)<0.3 and abs(dy)<0.3: return img
+    res=img.copy(); k7=cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(7,7))
+    for cx,cy,rx,ry,hard,soft in eyes:
+        x0,y0,x1,y1=cx-rx-14,cy-ry-14,cx+rx+14,cy+ry+14
+        loc=img[y0:y1,x0:x1]; ell=cv2.dilate((hard[y0:y1,x0:x1]>0).astype(np.uint8),np.ones((5,5),np.uint8))
+        hsv=cv2.cvtColor(loc,cv2.COLOR_BGR2HSV)
+        sclera=((hsv[...,2]>185)&(hsv[...,1]<80)&(ell>0)).astype(np.uint8)
+        cand=(((hsv[...,2]<160)&(sclera==0)&(ell>0))).astype(np.uint8)
+        cand=cv2.morphologyEx(cand,cv2.MORPH_OPEN,k7)       # тонкие линии век и ресниц уходят
+        n,lab,st,_=cv2.connectedComponentsWithStats(cand)
+        if n<2 or sclera.sum()<20: continue                 # глаз закрыт или радужка не найдена — не трогаем
+        iris=(lab==1+np.argmax(st[1:,cv2.CC_STAT_AREA])).astype(np.uint8)
+        if iris.sum()<80: continue
+        iris=cv2.dilate(iris,np.ones((3,3),np.uint8))
+        opening=cv2.morphologyEx(((sclera|iris)>0).astype(np.uint8),cv2.MORPH_CLOSE,np.ones((5,5),np.uint8))
+        scol=np.median(loc[sclera>0],axis=0)
+        bg=loc.astype(np.float32).copy(); bg[iris>0]=scol                       # место радужки — белок
+        M=np.float32([[1,0,dx],[0,1,dy]]); w,h=x1-x0,y1-y0
+        mov=cv2.warpAffine(loc.astype(np.float32),M,(w,h)); mm=cv2.warpAffine(iris.astype(np.float32),M,(w,h))
+        a=cv2.GaussianBlur(mm*opening,(0,0),0.8)[...,None]                       # радужка уходит под веко
+        o=cv2.GaussianBlur(opening.astype(np.float32),(0,0),0.8)[...,None]
+        new=bg*(1-a)+mov*a
+        res[y0:y1,x0:x1]=np.clip(loc*(1-o)+new*o,0,255).astype(np.uint8)
+    return res
 def gaze(tt):
     """Куда смотрит Марк (сдвиг радужки в пикселях картинки)."""
     if tt<P[1][0]-0.12:                                   # читает: глаза бегут по строке и возвращаются к началу следующей
-        ph=((tt-0.2)*0.85)%1.0; return (-6+12*min(ph/0.85,1.0) if ph<0.85 else 6-12*(ph-0.85)/0.15, 2.0)
-    if tt<P[1][1]+0.5: return (0.0,-6.0)                  # удивление: взгляд вскидывается от папки
+        ph=((tt-0.2)*0.85)%1.0; return (-5+10*min(ph/0.85,1.0) if ph<0.85 else 5-10*(ph-0.85)/0.15, 1.5)
+    if tt<P[1][1]+0.5: return (0.0,-3.0)                  # удивление: взгляд вскидывается от папки
     if tt<(P[2][0]+P[2][1])/2: return (1.5*math.sin(tt*3.0),0.0)    # растерянность: смотрит в сторону, думает
-    return (-9.0,4.0)                                     # «…первый день»: переводит взгляд к зрителю
+    return (-6.0,2.5)                                     # «…первый день»: переводит взгляд к зрителю
 GZ=[0.0,0.0]
+GAZE_CODE=False   # сдвиг радужки кодом даёт артефакты у век; взгляд — нарисованными вариантами (как рты)
 # ---------- голова: мягкий поворот вокруг шеи ----------
 PIV=(500,770); yy,xx=np.mgrid[0:h0,0:w0].astype(np.float32)
 wgt=np.clip((815-yy)/(815-725),0,1); wgt=wgt*wgt*(3-2*wgt)
@@ -141,7 +168,7 @@ def pose(tt):
     ang+=4.0*env(tt,P[2][0]-0.2,P[2][1]+0.5,0.5)                                    # растерянность: медленный наклон набок
     ang+=0.8*math.sin(2*math.pi*0.6*tt)*env(tt,P[2][0],P[2][1],0.3)                  # и лёгкое покачивание, пока думает
     return ang,dy
-EW_BASE=_eye_weight(EYE_BASE); EW_PUZ=_eye_weight(EYE_PUZ)
+EM_BASE=_eye_masks(EYE_BASE); EM_PUZ=_eye_masks(EYE_PUZ)
 def background():
     bg=Image.open(f"{adir}/../BG-01/bg01_office.png").convert("RGB")
     k=max(W/bg.width,H/bg.height)*1.4; bg=bg.resize((int(bg.width*k)+1,int(bg.height*k)+1),Image.LANCZOS)
@@ -163,8 +190,8 @@ ff=subprocess.Popen(["ffmpeg","-y","-loglevel","error","-f","rawvideo","-pix_fmt
   "-c:a","aac","-b:a","192k","-ar","48000","-shortest","-movflags","+faststart",f"{out}/mark_emotions.mp4"],stdin=subprocess.PIPE)
 for i in range(int(TOTAL*FPS)):
     tt=i/FPS; img,alpha,v=compose(tt); ang,dy=pose(tt)
-    gx_,gy_=gaze(tt); GZ[0]+=(gx_-GZ[0])*0.45; GZ[1]+=(gy_-GZ[1])*0.45      # быстрый, но не мгновенный перевод взгляда
-    img=gaze_warp(img, EW_PUZ if face_state(tt)[1]>0.5 else EW_BASE, GZ[0], GZ[1])
+    gx_,gy_=gaze(tt) if GAZE_CODE else (0.0,0.0); GZ[0]+=(gx_-GZ[0])*0.45; GZ[1]+=(gy_-GZ[1])*0.45
+    img=gaze_shift(img, EM_PUZ if face_state(tt)[1]>0.5 else EM_BASE, GZ[0], GZ[1])
     img=np.clip(img*SHADE,0,255).astype(np.uint8)
     rgba=head_warp(np.dstack([cv2.cvtColor(img,cv2.COLOR_BGR2RGB),alpha]),ang,dy)
     breath=1+0.006*math.sin(2*math.pi*0.25*tt)

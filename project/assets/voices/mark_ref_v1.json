@@ -1,0 +1,8 @@
+{
+ "role": "MARK",
+ "engine": "Qwen3-TTS-12Hz-1.7B (Apache 2.0): образец создан VoiceDesign, реплики — клоном (Base) по этому образцу",
+ "ref_text": "Странно. Я здесь первый день.",
+ "voice_design_instruct": "A young Russian man, about 19 years old, soft clear light voice, not deep, not husky. He is mildly puzzled, speaking at a normal natural pace, not drawn out. Even intonation across the sentence, no special emphasis on any single word, slight falling tone at the end.",
+ "chosen_by_owner": "2026-10-30, вариант «В» в сравнении голоса Q3",
+ "note": "Синтетический голос, не клон реального человека. Ударения Qwen ставит сам — проверять на слух."
+}
