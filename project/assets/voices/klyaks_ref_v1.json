@@ -1,0 +1,10 @@
+{
+ "role": "KLY",
+ "engine": "Qwen3-TTS-12Hz-1.7B (Apache 2.0): голос создан VoiceDesign (вариант Ж3), образец — его клон (Base) с temperature 0.6, top_p 0.85; реплики — клоном этого образца",
+ "ref_text": "Опять ты. Раз триста — сейчас спросишь, где кофе.",
+ "voice_design_instruct": "A young woman with a high, light, bright voice, mischievous and impish, cartoon character. Smug and teasing, a lazy 'Опять ты', then one quick amused sentence, as if he has seen this many times.",
+ "gen": {"temperature": 0.6, "top_p": 0.85},
+ "emphasis": "logical stress fixed with tools/emphasis.py: опять, триста, кофе (klyaks_ref_v1_emph.wav)",
+ "chosen_by_owner": "2026-10-30, вариант «С2+»",
+ "note": "Синтетический голос, не клон реального человека. Грамматический род Клякса — мужской; женский голос для маленького мультперсонажа — решение владельца."
+}
