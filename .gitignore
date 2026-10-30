@@ -6,3 +6,6 @@ vosk-model-*/
 project/*/05_previews/*.mp4
 project/*/05_previews/*.wav
 __pycache__/
+# тайминг новых черновиков тоже пересобирается; v1 оставлен как эталон для проверки рендера
+project/*/05_previews/*_timing.json
+!project/*/05_previews/voice_draft_v1_timing.json
