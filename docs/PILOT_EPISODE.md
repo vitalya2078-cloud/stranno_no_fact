@@ -238,6 +238,14 @@
 **CH-04b**
 > Use the supplied approved character reference for Klyaks. The small ink-drop creature in its base drop shape, large glowing amber eyes, smug sideways grin. Strong violet rim light around the silhouette. Plain flat neutral background for cutout. Preserve exact shape and colors. No text, no limbs, no redesign.
 
+## Готовые ресурсы (30.10.2026)
+| ID | Файл | Источник | Статус |
+|---|---|---|---|
+| BG-01 | `project/assets/S01E01_smena/BG-01/bg01_office.png` (944×1680) | Canva (генерация Claude по образцу владельца) | в тесте; часы без стрелок |
+| CH-01 | `project/assets/S01E01_smena/CH-01/ch01_base.png` + `_eyes_closed`, `_mouth_open_small`, `_mouth_a`, `_mouth_o` | основная и «глаза закрыты» — владелец; рты — Canva (правки основной) | в тесте |
+
+Права на коммерческое использование картинок Canva и нейросети владельца — проверить до публикации (`PRODUCTION_PLAN.md`, таблица прав).
+
 ## Анимация: движение по смыслу, а не одно на всех
 Решение владельца 30.10.2026: анимация динамичная и разная. Каждой реплике в `timeline.json` назначается своё движение по пометке эмоции:
 - **Клякс:** ехидство — покачивание с наклоном и прищуром; тихая серьёзность — почти неподвижен, медленное дыхание; испуг — сжатие и мелкая дрожь; торжество — подскок с растяжением; превращения лужица ↔ капля; брызги парят вокруг.

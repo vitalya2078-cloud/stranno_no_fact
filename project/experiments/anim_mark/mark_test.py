@@ -42,6 +42,9 @@ def align(src,dst,box):
     print("совмещение: пар", len(good), "надёжных", int(inl.sum()))
     return cv2.warpAffine(src,M,(dst.shape[1],dst.shape[0]),flags=cv2.INTER_CUBIC,borderValue=(197,197,197))
 closed_al=align(closed,base,(250,300,750,700))       # совмещаем по лицу, а не по всей картинке
+# рты: правки основной картинки (Canva), совмещённые с ней; X — рот основной картинки
+MOUTHS={k:align(cv2.imread(f"{adir}/ch01_mouth_{k}.png"),base,(250,300,750,800)) for k in ("open_small","a","o")}
+SHAPE2MOUTH={"B":"open_small","C":"open_small","D":"a","E":"o","F":"o"}
 # маска глаз: два овала с мягким краем (координаты по base 940×1672)
 EYES=[(372,557,48,36),(507,545,50,34)]
 em=np.zeros((h0,w0),np.float32)
@@ -58,17 +61,15 @@ def cutout(img):
     a=cv2.erode(a,np.ones((3,3),np.uint8),iterations=1)   # срезаем светлую кайму фона по краю
     return cv2.GaussianBlur(a,(3,3),0)
 ALPHA=cutout(base)
-MOUTH=(466,650)        # центр линии рта
+# подгонка света под комнату: слева тёплый свет лампы, вправо — притенение с фиолетовым оттенком
+gx=np.linspace(0,1,w0,dtype=np.float32)[None,:,None]
+SHADE=np.concatenate([1.0-0.30*gx, 0.97-0.32*gx, 0.95-0.18*gx],-1)   # каналы BGR
+MOUTH=(466,650)        # центр рта
+mm=np.zeros((h0,w0),np.float32); cv2.ellipse(mm,MOUTH,(52,36),-4,0,360,1.0,-1)
+mm=cv2.GaussianBlur(mm,(0,0),6)[...,None]
 def draw_mouth(img, shp, op):
     if shp=="X": return img
-    wpx,hpx={"B":(26,5),"C":(34,8+4*op),"D":(30,13+7*op),"E":(22,13),"F":(15,11)}[shp]
-    S=4; pw,ph=80,60; patch=Image.new("RGBA",(pw*S,ph*S),(0,0,0,0)); d=ImageDraw.Draw(patch)
-    cx,cy=pw*S/2,ph*S/2
-    d.ellipse([cx-wpx*S/2,cy-hpx*S/2,cx+wpx*S/2,cy+hpx*S/2],fill=(92,38,40,255),outline=(48,26,24,255),width=int(2.2*S))
-    if hpx>12: d.ellipse([cx-wpx*S*0.25,cy+hpx*S*0.05,cx+wpx*S*0.25,cy+hpx*S/2-S*2],fill=(170,80,80,255))
-    patch=patch.rotate(-4,resample=Image.BICUBIC).resize((pw,ph),Image.LANCZOS)
-    pil=Image.fromarray(cv2.cvtColor(img,cv2.COLOR_BGR2RGB)); pil.paste(patch,(MOUTH[0]-pw//2,MOUTH[1]-ph//2),patch)
-    return cv2.cvtColor(np.asarray(pil),cv2.COLOR_RGB2BGR)
+    return (img*(1-mm)+MOUTHS[SHAPE2MOUTH[shp]]*mm).astype(np.uint8)
 # мягкий поворот головы вокруг шеи: вес 1 выше подбородка, 0 ниже ворота
 PIV=(500,770); yy,xx=np.mgrid[0:h0,0:w0].astype(np.float32)
 wgt=np.clip((815-yy)/(815-725),0,1); wgt=wgt*wgt*(3-2*wgt)
@@ -97,13 +98,14 @@ def blink_amt(tt):
     return 0.0
 # ---------- фон-заглушка ----------
 def background():
-    y=np.arange(H)[:,None]; x=np.arange(W)[None,:]
-    px=np.zeros((H,W,3),np.float32); px[:]=[22,17,40]
-    px+=np.exp(-(((x-150)/520.0)**2+((y-900)/700.0)**2))[...,None]*np.array([120,70,25],np.float32)
-    px[(y>1700).repeat(W,1)]=[48,32,30]
-    img=Image.fromarray(np.clip(px,0,255).astype(np.uint8)); d=ImageDraw.Draw(img)
-    for k in range(3): d.rectangle([760+k*90,350,830+k*90,1250],fill=(32,24,50),outline=(45,35,65),width=4)   # стеллаж с папками
-    return img
+    """Кабинет BG-01: заполняем кадр, слегка размываем и притемняем — фон дальше героя."""
+    bg=Image.open(f"{adir}/../BG-01/bg01_office.png").convert("RGB")
+    k=max(W/bg.width,H/bg.height)*1.4    # крупнее и снизу: за Марком лампа и полки, часы уходят за верх кадра
+    bg=bg.resize((int(bg.width*k)+1,int(bg.height*k)+1),Image.LANCZOS)
+    x0=int((bg.width-W)*0.45); y0=bg.height-H
+    bg=bg.crop((x0,y0,x0+W,y0+H))
+    arr=cv2.GaussianBlur(np.asarray(bg),(0,0),2.2).astype(np.float32)*0.82
+    return Image.fromarray(arr.astype(np.uint8))
 BG=background()
 sub_f=ImageFont.truetype(f"{fontdir}/PTSans-Bold.ttf",66); lab_f=ImageFont.truetype(f"{fontdir}/PTMono.ttf",32)
 def wrap(d,txt,f,w=900):
@@ -122,6 +124,7 @@ for i in range(int(TOTAL*FPS)):
     bl=blink_amt(tt); img=base if bl==0 else (base*(1-em*bl)+closed_al*em*bl).astype(np.uint8)
     v=viseme_at(tt); img=draw_mouth(img,v[0],v[1])
     ang,dy=pose(tt)
+    img=np.clip(img*SHADE,0,255).astype(np.uint8)
     rgba=np.dstack([cv2.cvtColor(img,cv2.COLOR_BGR2RGB),ALPHA])
     rgba=head_warp(rgba,ang,dy)
     breath=1+0.006*math.sin(2*math.pi*0.25*tt)
@@ -134,7 +137,7 @@ for i in range(int(TOTAL*FPS)):
     if cur:
         lns=wrap(d,cur[-1][2],sub_f)[:2]; lh=84; y0=1380-lh*len(lns)
         for j,ln in enumerate(lns): d.text((W/2,y0+j*lh+lh/2),ln,font=sub_f,fill=(245,238,220),anchor="mm",stroke_width=5,stroke_fill=(10,8,20))
-    d.text((50,H-110),"ТЕСТ · Марк, кадр 2 · фон-заглушка",font=lab_f,fill=(120,110,150))
+    d.text((50,H-110),"ТЕСТ · Марк, кадр 2 · рты и кабинет из Canva",font=lab_f,fill=(120,110,150))
     d.text((50,H-68),f"рот: {v[0]}  {tt:4.1f} c",font=lab_f,fill=(120,110,150))
     ff.stdin.write(frame.tobytes())
 ff.stdin.close()

@@ -15,7 +15,7 @@ def normalize(src, dst, i=I, tp=TP, lra=LRA, sr=48000):
     base=f"loudnorm=I={i}:TP={tp}:LRA={lra}"
     m=_measure_ln(src,"",base); pre=""; gain=0.0; src_tp=float(m["input_tp"])
     # лимитер срезает часть громкости, поэтому усиление перед ним подбираем за несколько замеров
-    for _ in range(4):
+    for _ in range(8):
         miss=i-float(m["input_i"])
         if float(m["input_tp"])+miss<=tp: break
         gain+=miss
