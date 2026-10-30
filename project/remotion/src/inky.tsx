@@ -8,7 +8,7 @@ export type InkyHand = "chin" | "point" | "wave" | "down" | "up";
 export type InkyPose = { t: number; expr: InkyExpr; hand: InkyHand; look?: [number, number]; blink?: number; talk?: number;
   mark?: number /* 0 — «?», 1 — «!» */; showMark?: boolean; squash?: number };
 
-const C = { dark: "#26114f", mid: "#4b2591", light: "#7a49d6", rim: "#a77cff", eye: "#ffc12e", eyeRing: "#e2860c", pupil: "#3b1a0b", blush: "#ff6fa8", mark: "#ffc12e" };
+const C = { dark: "#1b0a3b", mid: "#4a1e8a", light: "#a23ad8", rim: "#c27bff", eye: "#ffc12e", eyeRing: "#e2860c", pupil: "#3b1a0b", blush: "#ff6fa8", mark: "#ffc12e" };
 const EXPR: Record<InkyExpr, { eye: number; pupil: number; lid: number; brow: [number, number]; mouth: string; blush: number; shake?: number }> = {
   neutral:   { eye: 1.0,  pupil: 1.0,  lid: 0.0,  brow: [0, 0],      mouth: "smile", blush: 0.25 },
   think:     { eye: 1.0,  pupil: 0.95, lid: 0.08, brow: [0.25, -0.15], mouth: "hmm",  blush: 0.35 },
@@ -90,9 +90,14 @@ export const Inky: React.FC<{ pose: InkyPose; x?: number; y?: number; scale?: nu
   return (
     <g transform={`translate(${x},${y + float}) scale(${scale}) rotate(${tilt + shake}, 210, 260)`}>
       <defs>
-        <radialGradient id="inkBody" cx="38%" cy="30%" r="75%">
-          <stop offset="0%" stopColor={C.light} /><stop offset="45%" stopColor={C.mid} /><stop offset="100%" stopColor={C.dark} />
+        {/* как у референса: пурпурный блик сверху → фиолетовый → почти чёрный к краям и вниз */}
+        <radialGradient id="inkBody" cx="52%" cy="22%" r="80%">
+          <stop offset="0%" stopColor="#b347e6" /><stop offset="28%" stopColor="#7a2cc4" /><stop offset="58%" stopColor={C.mid} /><stop offset="100%" stopColor={C.dark} />
         </radialGradient>
+        <linearGradient id="inkTail" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#4a1e8a" /><stop offset="55%" stopColor="#2a0f5a" /><stop offset="100%" stopColor="#12062a" stopOpacity="0.85" />
+        </linearGradient>
+        <radialGradient id="inkDrop" cx="35%" cy="30%" r="70%"><stop offset="0%" stopColor="#9a3ad6" /><stop offset="100%" stopColor={C.dark} /></radialGradient>
         <filter id="inkGlow" x="-30%" y="-30%" width="160%" height="160%">
           <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor={C.rim} floodOpacity="0.55" />
         </filter>
@@ -100,10 +105,10 @@ export const Inky: React.FC<{ pose: InkyPose; x?: number; y?: number; scale?: nu
       </defs>
       {/* парящие капли */}
       {[[96, 170, 0.9, 0], [334, 300, 0.7, 1.3], [118, 360, 0.6, 2.2], [70, 260, 0.75, 3.1], [300, 110, 0.55, 4]].map(([dx, dy, s, ph], i) => (
-        <path key={i} d={drop(dx + Math.sin(t * 1.4 + ph) * 6, dy + Math.cos(t * 1.7 + ph) * 8, s, 0)} fill={C.mid} stroke={C.dark} strokeWidth={2} />
+        <path key={i} d={drop(dx + Math.sin(t * 1.4 + ph) * 6, dy + Math.cos(t * 1.7 + ph) * 8, s, 0)} fill="url(#inkDrop)" stroke={C.dark} strokeWidth={2} />
       ))}
       <g filter="url(#inkGlow)">
-        <path d={tailPath(t, sq)} fill="url(#inkBody)" stroke={C.dark} strokeWidth={4} strokeLinejoin="round" />
+        <path d={tailPath(t, sq)} fill="url(#inkTail)" stroke={C.dark} strokeWidth={4} strokeLinejoin="round" />
         <path d={headPath(t, sq)} fill="url(#inkBody)" stroke={C.dark} strokeWidth={4} strokeLinejoin="round" />
       </g>
       {/* блик и бровки */}
@@ -116,7 +121,7 @@ export const Inky: React.FC<{ pose: InkyPose; x?: number; y?: number; scale?: nu
       <Eye cx={250} cy={eyeY - 4} r={45} e={e} look={look} blink={blink} side={1} />
       <ellipse cx={210} cy={288 * sq} rx={30} ry={10} fill={C.blush} opacity={e.blush} />
       {mouth}
-      {handPath ? <path d={handPath} fill={C.mid} stroke={C.dark} strokeWidth={4} strokeLinejoin="round" /> : null}
+      {handPath ? <path d={handPath} fill="url(#inkDrop)" stroke={C.dark} strokeWidth={4} strokeLinejoin="round" /> : null}
       {pose.showMark !== false ? (
         <g transform={`translate(${360 + Math.sin(t * 2) * 4}, ${120 + Math.cos(t * 2.3) * 5}) scale(${markBounce}) rotate(${(1 - mk) * 12})`} filter="url(#markGlow)">
           <text x={0} y={0} fontSize={110} fontWeight={900} fontFamily="Arial Black, Arial, sans-serif" textAnchor="middle" fill={C.mark}
