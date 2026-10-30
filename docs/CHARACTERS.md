@@ -23,10 +23,11 @@
 **Голос:** молодой взрослый мужской голос, средний регистр, спокойная подача, лёгкая усталость; чёткая дикция, без чрезмерного актёрского пафоса.
 **Голос синтеза (утверждён):** Vosk `male_1` (speaker_id 4), вариант «Б»: без сдвига тона и обработки. Темп и паузы режиссируются по репликам (0,85–1,05), из 6 дублей берётся лучший без сбоев.
 **Фраза-мотив:** «Ладно. Это уже не моя смена». Звучит в финале пилота; дальше — не в каждой серии, чтобы не приелась.
-**Постоянный предмет:** сумка с документами. Внутри — то, что нужно для работы (в пилоте это штамп).
+**Постоянный предмет:** рюкзак. Внутри — то, что нужно для работы (во 2-й серии это штамп).
 
 ### Визуальный образ (к утверждению)
-Молодой взрослый мужчина, растрёпанные тёмные волосы, выразительные брови. На нём **приглушённое тёмно-бирюзовое** пальто или длинная куртка поверх простой одежды. Тон пальто заметно темнее и менее насыщенный, чем бирюзовое свечение аномалий, — так одежда не путается с эффектом. Небольшая сумка с документами через плечо. Узнаваемый силуэт, крупные выразительные глаза, чёткий контур. Не фотореалистичный.
+**Ориентир — постер группы владельца (v2.5).** Юноша лет 19, юное лицо, растрёпанные каштановые волосы, крупные выразительные карие глаза, выразительные брови. Светло-серое худи под тёмно-коричневой курткой, тёмный рюкзак на одном плече. Фонарик — реквизит отдельных серий, не постоянный предмет. Для перекладочной анимации: крупная голова, простой толстый контур, плоская заливка с минимумом штриховки, крупные черты лица — чтобы рот и моргание читались на телефоне. Не фотореалистичный.
+*До v2.5 был «молодой взрослый» в тёмно-бирюзовом пальто с сумкой; заменено по примеру владельца.*
 
 **Нужно для пилота:**
 - ракурсы: фронтальный, трёхчетвертной, боковой, вид со спины, полный рост;
@@ -42,7 +43,7 @@
 **Фраза-мотив:** «Технически, я предупреждал».
 
 ### Визуальный образ (к утверждению)
-Маленькое тёмное чернильное существо с мягким силуэтом капли, двумя крупными светящимися янтарно-жёлтыми глазами и небольшой выразительной улыбкой. Фиолетовые блики по краям. Без дополнительных конечностей в базовом дизайне.
+**Ориентир — постер группы владельца (v2.5).** Маленькое чёрно-фиолетовое чернильное существо: гладкое тело-капля, по краю несколько небольших застывших чернильных брызг, два крупных светящихся янтарно-жёлтых глаза, небольшой выразительный рот. Фиолетовое свечение по контуру. Без рук, ног и длинных отростков: их сложно анимировать и удерживать одинаковыми между кадрами.
 
 **Правило читаемости (обязательно):** Клякс тёмный, а мир по ночам тоже тёмный. В каждом кадре его силуэт отделяется от фона фиолетовым контровым светом или ободком, а светящиеся глаза остаются самой яркой точкой на нём. Если Клякс не читается на экране телефона, кадр переделывается.
 
@@ -98,11 +99,11 @@
 > Create an original professional 2D graphic-novel character design sheet for [CHARACTER DESCRIPTION]. Show the same character consistently in full-body front view, three-quarter view, side view, back view, and a row of clear facial expressions: [LIST OF EXPRESSIONS]. Clean bold ink outlines, controlled cel shading, subtle halftone texture, restrained violet and teal shadows with warm amber accents, expressive readable silhouette, polished hand-drawn animation concept art. Plain neutral background, no text, no labels, no props unrelated to the character, no photorealism, no 3D render, no collage of unrelated characters. Preserve identical proportions, clothing, facial features and colors in every view.
 
 **Подстановка для Марка:**
-> a young adult man with messy dark hair, expressive eyebrows and large expressive eyes, wearing a muted dark teal long coat (darker and less saturated than a glowing teal light) over simple everyday clothes, with a small document bag over his shoulder; calm, slightly tired, serious demeanor
+> a young man around 19 with messy chestnut-brown hair, large expressive brown eyes, expressive eyebrows and a youthful face, wearing a light grey hoodie under a dark brown casual jacket, a dark backpack strap over one shoulder; calm, slightly tired, serious demeanor. Simple clean bold outlines, flat cel shading with minimal hatching, large readable facial features suitable for 2D cut-out animation. If the owner's group poster is available, attach it as a reference
 
 Выражения: calm businesslike, focused reading, skeptical, wary, quiet shock, tired acceptance.
 
 **Подстановка для Клякса:**
-> a small dark ink-drop creature with a soft teardrop silhouette, two large glowing amber-yellow eyes, a small expressive smile, violet rim highlights along its edges that separate it from dark backgrounds; no arms or legs
+> a small living ink drop with a smooth soft teardrop body, deep black-violet color, a few small frozen ink splashes along the edges, two large glowing amber-yellow eyes, a small expressive mouth, strong violet rim light around the silhouette that separates it from dark backgrounds; no arms, no legs, no tentacles
 
 Выражения и формы: base drop, ink puddle (spilled flat on paper, only eyes and smile visible), peeking (stretched upward), hiding (squashed flat, only eyes visible), scared (eyes wide, body compressed), smug grin, conspiratorial look, quiet seriousness, relief.

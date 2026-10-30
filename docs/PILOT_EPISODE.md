@@ -1,25 +1,25 @@
-# PILOT_EPISODE.md — «Смена не принята» (v2.4, пилот, вводная серия)
+# PILOT_EPISODE.md — «Ночная смена», серия 1: «Смена не принята» (v2.5, пилот канала)
 
 ## Статус
 Черновик сценария v2.4, 30.10.2026. **Ждёт утверждения владельцем.**
 Заменяет прежний пилот «Квартира № 14», который перенесён во вторую серию (`S01E02_KVARTIRA_14.md`). Решение владельца: дебют должен познакомить зрителя с Марком, Кляксом и Бюро.
 
 - Рабочая цель: 45–58 секунд.
-- **Расчётная оценка: около 53 секунд** (ниже, «Как считался хронометраж»). Это оценка, а не замер. Хронометраж подтверждается только синтезом всех реплик утверждёнными голосами.
+- **Расчётная оценка: около 52–53 секунд** (ниже, «Как считался хронометраж»). Это оценка, а не замер. Хронометраж подтверждается только синтезом всех реплик утверждёнными голосами.
 
 ## Логлайн
-Первая ночная смена Марка в Бюро странностей. Первое дело на столе: «В Бюро не наступает полночь. Заявитель — Бюро». Из опрокинутой чернильницы появляется Клякс и сообщает, что Марк сидит за этим столом уже раз триста. Марк ломает петлю не силой и не бегством, а канцелярией: принимает смену, которую никто не принял.
+Первая ночная смена Марка в Бюро. Первое дело на столе: «В Бюро не наступает полночь. Заявитель — Бюро». Из опрокинутой чернильницы появляется Клякс и сообщает, что Марк сидит за этим столом уже раз триста. Марк ломает петлю не силой и не бегством, а канцелярией: принимает смену, которую никто не принял.
 
 ## Что зритель узнаёт о мире
 | Что | Как подано | Чего НЕ раскрываем |
 |---|---|---|
-| Марк — ночной сотрудник Бюро странностей, это его первая смена | «Бюро странностей. Ночная смена. Дело номер один». «Я здесь первый день» | Как он попал на эту работу |
+| Марк — ночной сотрудник Бюро, это его первая смена | «Ночная смена. Дело номер один». «Жалоба: в Бюро…». «Я здесь первый день» | Как он попал на эту работу |
 | Клякс — чернильное существо, живёт при Бюро, ехидный, знает больше, чем говорит | Появляется из пролитых чернил; помнит все триста повторов; обрывает себя на «пока…» и «Не спрашивай» | Откуда Клякс и почему он помнит повторы |
 | Бюро получает странные дела, а дела приходят будто сами | «Заявитель — Бюро» | Кто составляет дела |
 | Марк решает невозможное канцелярской логикой | Подпись в журнале смен заканчивает ночь | — |
 | Большая тайна | Строкой выше в журнале — «Смену сдал: М.» почерком Марка | Кто это написал и когда |
 
-Это не противоречит канону `PROJECT.md` §7: происхождение Бюро, Клякса и подписи «М.» не определяется.
+Это не противоречит канону `PROJECT.md` §7: происхождение Бюро, Клякса и подписи «М.» не определяется. Подпись «М.» — первая подсказка сквозной тайны истории «Ночная смена».
 
 ## Странность эпизода и причинно-следственная связь
 **Локальное правило эпизода:** ночь в кабинете повторяется, пока смену никто не принял. Часы доходят до полуночи и отскакивают на 23:59.
@@ -54,7 +54,7 @@
 ## Сценарий (чистый текст для чтения)
 
 > **КАДР 1.** Настенные часы крупно, 23:59. Минутная стрелка дёргается к 12 — щелчок — и отскакивает назад.
-> **МАРК** (за кадром, ровно): Бюро странностей. Ночная смена. Дело номер один.
+> **МАРК** (за кадром, ровно): Ночная смена. Дело номер один.
 >
 > **КАДР 2.** Ночной кабинет. Марк за столом под лампой открывает тонкую папку.
 > **МАРК** (читает): Жалоба: в Бюро не наступает полночь. Заявитель — Бюро.
@@ -103,7 +103,7 @@
 
 | Кадр | Таймкод | Длит. | Изображение и действие | Реплика | Звук | Камера / движение | Ресурсы | Рот |
 |---|---|---|---|---|---|---|---|---|
-| 1 | 0:00–0:04 | 4,0 | Часы крупно, 23:59; стрелка дёргается к 12 и отскакивает | МАРК (з/к): «Бюро странностей. Ночная смена. Дело номер один.» | Тиканье с первого кадра; на отскоке — щелчок «назад»; тон ночного кабинета | Статика, лёгкий наезд; стрелки — отдельные слои, анимирует Claude | PR-01, GFX-01 | Нет (закадр) |
+| 1 | 0:00–0:04 | 4,0 | Часы крупно, 23:59; стрелка дёргается к 12 и отскакивает | МАРК (з/к): «Ночная смена. Дело номер один.» | Тиканье с первого кадра; на отскоке — щелчок «назад»; тон ночного кабинета | Статика, лёгкий наезд; стрелки — отдельные слои, анимирует Claude | PR-01, GFX-01 | Нет (закадр) |
 | 2 | 0:04–0:10 | 6,0 | Марк за столом под лампой открывает папку | МАРК: «Жалоба: в Бюро не наступает полночь. Заявитель — Бюро.» (пауза) «Странно. Я здесь первый день.» | Шорох папки; гул лампы | Параллакс: Марк / кабинет; медленный наезд. Текст жалобы на папке не обязателен — звучит голосом | BG-01, CH-01 | Нет (смотрит в папку) |
 | 3 | 0:10–0:15 | 5,0 | Стол сверху: чернильница падает, лужица растекается по бланку, в ней открываются глаза | КЛЯКС: «Опять ты.» МАРК (з/к): «Мы знакомы?» | Стук чернильницы, тихий плеск; «моргание» — короткий влажный звук | Статика сверху; лужица растекается маской (~1 с), глаза проявляются | BG-02, CH-02 | Клякс — опционально 2 состояния |
 | 4 | 0:15–0:19 | 4,0 | Клякс-лужица крупно, ехидный | КЛЯКС: «Раз триста. Сейчас спросишь, где кофе.» | Тон кабинета | Медленный наезд | CH-02 (крупный кроп) | Клякс — опционально |
@@ -119,8 +119,8 @@
 **Итого (расчётно): ≈ 53,5 секунды.**
 
 ## Как считался хронометраж
-- Слов в репликах: 76. Реплик для синтеза: 16 (Марк — 10, Клякс — 6). В прошлом пилоте было 89 слов.
-- Темп взят из реального синтеза прошлого пилота: 89 слов речи и межрепличных зазоров заняли около 45 с из 56,6 → **около 2,0 слова в секунду**. Поэтому для этого сценария: речь ≈ 38 с, смены говорящих ≈ 4 с, паузы без речи (отскок стрелки, разлив чернил, пауза с кружкой, «пока…», подпись и удар часов, титр) ≈ 11 с.
+- Слов в репликах: 74. Реплик для синтеза: 16 (Марк — 10, Клякс — 6). В прошлом пилоте было 89 слов.
+- Темп взят из реального синтеза прошлого пилота: 89 слов речи и межрепличных зазоров заняли около 45 с из 56,6 → **около 2,0 слова в секунду**. Поэтому для этого сценария: речь ≈ 37 с, смены говорящих ≈ 4 с, паузы без речи (отскок стрелки, разлив чернил, пауза с кружкой, «пока…», подпись и удар часов, титр) ≈ 11 с.
 - Диапазон: при 2,2 слова/с — около 50 с, при 1,8 — около 57 с.
 - Проверка: синтез всех реплик утверждёнными голосами, затем аниматик.
 
@@ -137,7 +137,7 @@
 Голоса — `CHARACTERS.md`. Владелец разрешил пересмотреть голоса (30.10.2026), поэтому перед синтезом пилота — новый кастинг. Ударения — только по словарю модели, перед синтезом прогнать `tools/vosk_stress.py` и `tools/homographs.py`.
 
 **МАРК** (10 реплик):
-1. «Бюро странностей. Ночная смена. Дело номер один.» — ровно, по-деловому, как запись в журнал; паузы между фразами.
+1. «Ночная смена. Дело номер один.» — ровно, по-деловому, как запись в журнал; пауза между фразами.
 2. «Жалоба: в Бюро не наступает полночь. Заявитель — Бюро.» — читает; перед «Заявитель» короткая пауза, «Бюро» в конце — с лёгким недоумением, но без иронии.
 3. «Странно. Я здесь первый день.» — спокойно, как констатация.
 4. «Мы знакомы?» — вежливо, настороженно.
@@ -181,7 +181,7 @@
 | BG-02 | Тот же стол сверху: бланк, чернильница, ручка, пустая кружка | 3, 5 | Без надписей на бланке |
 | PR-01 | Циферблат настенных часов крупно, **без стрелок** | 1, 8, 11 | Цифры на циферблате — римские или без цифр, чтобы генератор не исказил |
 | PR-02 | Раскрытый журнал смен крупно, разлинованные пустые графы | 7, 8, 10 | Записи и подписи — монтажная графика |
-| PR-03 | Рука Марка (рукав пальто) с ручкой над журналом | 8 | Рукав — по листу персонажа |
+| PR-03 | Рука Марка (рукав куртки) с ручкой над журналом | 8 | Рукав — по листу персонажа |
 | CH-01 | Марк за столом, 3/4, сидит, читает тонкую папку | 2, 6 | Нейтральный фон |
 | CH-02 | Клякс-лужица: растёкшаяся чернильная клякса, только глаза и ехидная улыбка | 3, 4 | **Новая форма Клякса** — сначала добавить на лист форм (`CHARACTERS.md`) |
 | CH-03 | Марк сидит, откинулся на спинку стула, спокойная усталая полуулыбка, смотрит вверх | 9, 11 | Нейтральный фон |
@@ -220,16 +220,16 @@
 > Original hand-drawn 2D graphic novel close-up of an open old ledger book lying on a desk, seen from above, vertical 9:16. Two pages with ruled empty table columns and rows, no writing at all, slightly yellowed paper, warm amber lamp light, violet-blue shadows at the edges. Large clean empty areas for handwriting to be added later. Clean ink outlines, subtle halftone. No text, no letters, no numbers, no logos, no watermark.
 
 **PR-03**
-> Use the supplied approved character reference for Mark's coat sleeve. Close-up of a hand in a muted dark teal coat sleeve holding an old fountain pen, the nib touching an empty ruled line of an open ledger, seen from above, vertical 9:16. Warm amber light, violet-blue shadows, hand-drawn 2D graphic novel style. No text, no writing, no extra fingers, no distorted hand, no watermark.
+> Use the supplied approved character reference for Mark's jacket sleeve. Close-up of a young man's hand in a dark brown jacket sleeve with a light grey hoodie cuff holding an old fountain pen, the nib touching an empty ruled line of an open ledger, seen from above, vertical 9:16. Warm amber light, violet-blue shadows, hand-drawn 2D graphic novel style. No text, no writing, no extra fingers, no distorted hand, no watermark.
 
 **CH-01**
-> Use the supplied approved character reference for Mark. Preserve exact face, hair, proportions, coat and colors. Mark sitting at a desk, waist-up, three-quarter view, reading a thin cardboard folder held in both hands, calm focused businesslike expression, warm amber desk-lamp light from the front-left, violet-blue shadows. Plain flat neutral background for cutout. Hand-drawn 2D graphic novel style, clean ink outlines, restrained cel shading. No text on the folder, no redesign, no extra limbs, no extra characters.
+> Use the supplied approved character reference for Mark. Preserve exact face, hair, proportions, hoodie, jacket and colors. Mark sitting at a desk, waist-up, three-quarter view, reading a thin cardboard folder held in both hands, calm focused businesslike expression, warm amber desk-lamp light from the front-left, violet-blue shadows. Plain flat neutral background for cutout. Hand-drawn 2D graphic novel style, clean ink outlines, restrained cel shading. No text on the folder, no redesign, no extra limbs, no extra characters.
 
 **CH-02**
 > Use the supplied approved character reference for Klyaks. Klyaks in a new state: a spilled flat puddle of dark ink lying on a sheet of paper, seen from above, with only his two large glowing amber-yellow eyes and a small smug grin visible in the puddle. Violet rim highlights along the puddle edges so it reads against dark backgrounds. Plain flat light neutral background for cutout. Hand-drawn 2D graphic novel style, clean ink outlines. No text, no limbs, no extra eyes, no redesign.
 
 **CH-03**
-> Use the supplied approved character reference for Mark. Preserve exact face, hair, coat and colors. Mark sitting and leaning back in an office chair, waist-up, three-quarter view, looking slightly up, a calm tired faint smile, warm amber light from below-left, violet-blue shadows. Plain flat neutral background for cutout. Hand-drawn 2D graphic novel style, clean ink outlines, restrained cel shading. No text, no redesign, no extra limbs.
+> Use the supplied approved character reference for Mark. Preserve exact face, hair, hoodie, jacket and colors. Mark sitting and leaning back in an office chair, waist-up, three-quarter view, looking slightly up, a calm tired faint smile, warm amber light from below-left, violet-blue shadows. Plain flat neutral background for cutout. Hand-drawn 2D graphic novel style, clean ink outlines, restrained cel shading. No text, no redesign, no extra limbs.
 
 **CH-04a**
 > Use the supplied approved character reference for Klyaks. The small ink-drop creature in its base drop shape, sitting, body slightly compressed, large glowing amber eyes, quiet serious expression with no smile. Strong violet rim light around the silhouette. Plain flat neutral background for cutout. Preserve exact shape and colors. No text, no limbs, no redesign.
@@ -246,8 +246,8 @@
 - Никаких призывов в мастере, упоминающих конкретную площадку.
 
 ## Контроль качества пилота
-- Зацепка (стрелка отскакивает + «Бюро странностей») — в первые 2 секунды.
-- Из ролика понятно: Марк — новичок ночной смены Бюро странностей; Клякс — существо из чернил, знает больше, чем говорит.
+- Зацепка (стрелка отскакивает + «Ночная смена. Дело номер один») — в первые 2 секунды.
+- Из ролика понятно: Марк — новичок ночной смены в Бюро; Клякс — существо из чернил, знает больше, чем говорит.
 - Причинность финала понятна без пояснений: смену сдали, но не приняли → ночь повторялась → Марк принял смену → наступила полночь.
 - Подпись «М.» не объясняется, но видна в кадре 7 до того, как становится важной.
 - Марк ни разу не язвит; ехидство — только у Клякса.
