@@ -54,6 +54,7 @@ closed=align(rd("eyes_closed"),base,FACE); surpr=align(rd("surprised"),base,FACE
 M_BASE={k:align(rd(f"mouth_{k}"),base,FACE) for k in ("open_small","a","o")}
 puz=decorate(align(rd("puzzled"),base,BODY),f"{fontdir}/PTMono.ttf")   # поза другая: совмещаем по телу и папке
 M_PUZ={k:align(rd(f"puzzled_mouth_{k}"),puz,FACE) for k in ("open_small","a","o")}
+LOOK=align(rd("puzzled_look"),puz,FACE)                    # растерянность, но взгляд в камеру: берём только глаза
 SHAPE2MOUTH={"B":"open_small","C":"open_small","D":"a","E":"o","F":"o"}
 # удивление: рот не закрывается до будничной линии — в паузах изумлённое «о», на гласных раскрыт шире
 SURPRISE_MOUTH={"X":"o","B":"o","C":"a","D":"a","E":"o","F":"o"}
@@ -87,6 +88,10 @@ def face_state(tt):
     surprise=ramp(tt,s_on,s_on+0.1)*(1-ramp(tt,s_off,s_off+0.15))
     puzzle=ramp(tt,P[1][1]+0.5,P[1][1]+0.57)            # поднимает голову в паузе: почти мгновенно, чтобы не было двоения
     return surprise,puzzle
+EYES_PUZ=soft([(400,527,40,30),(545,490,44,31)])           # глаза растерянной позы, без бровей
+def look_amt(tt):
+    """На «…первый день» (последние ~45% фразы) переводит взгляд в камеру за 2 кадра."""
+    t_look=P[2][0]+0.55*(P[2][1]-P[2][0]); return ramp(tt,t_look,t_look+2/FPS)
 BLINKS=[0.25,(P[0][0]+P[0][1])/2+0.3]     # не ближе 0,3 с к смене эмоции, иначе глаза двоятся
 def blink_amt(tt):
     for b in BLINKS:
@@ -103,6 +108,8 @@ def compose(tt):
     alpha=A_BASE.astype(np.float32)
     if puzzle:
         q=puz.astype(np.float32)
+        lk=look_amt(tt)
+        if lk: q=q*(1-EYES_PUZ*lk)+LOOK*EYES_PUZ*lk           # брови и рот остаются растерянными
         if v[0]!="X": q=q*(1-MM_PUZ)+M_PUZ[SHAPE2MOUTH[v[0]]]*MM_PUZ
         img=img*(1-puzzle)+q*puzzle; alpha=alpha*(1-puzzle)+A_PUZ*puzzle
     return np.clip(img,0,255).astype(np.uint8), alpha.astype(np.uint8), v
