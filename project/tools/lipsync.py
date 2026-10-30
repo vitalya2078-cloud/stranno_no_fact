@@ -26,6 +26,7 @@ def visemes(a, sr, fps=30, scale=1.0, floor_db=-32.0):
         if f2<1250: shape="F" if f1<450 else "E"
         elif op>0.62: shape="D"
         elif op>0.3: shape="C"
+        elif f2>1900: shape="C"; op=max(op,0.3)   # «и», «е»: рот почти закрыт по высоте, но растянут
         else: shape="B"
         out.append([shape,op])
     # сглаживание: одиночный кадр формы заменяется соседней, чтобы рот не «дребезжал»

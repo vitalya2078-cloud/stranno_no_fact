@@ -2,7 +2,7 @@
 Запуск: python3 -I klyaks_test.py <vosk_model_dir> <fonts_dir> <tools_dir> <out_dir>
 Это не финальный дизайн: настоящий Клякс будет слоями из утверждённого листа персонажа."""
 import sys, json, math, subprocess, numpy as np, soundfile as sf, librosa
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageChops
 vosk_p, fontdir, tools, out = sys.argv[1:5]
 sys.path.insert(0, tools)
 from stresslib import Stress
@@ -17,7 +17,7 @@ post=lambda a: librosa.effects.pitch_shift(a,sr=SR,n_steps=3)
 PHR=[("Раз триста.",1.05),("Сейчас спросишь, где кофе.",1.1)]
 aud=[]
 for text,rate in PHR:
-    a=V.best(text,2,rate,n=6,post=post); a=expand_range(a,1.5)
+    a=V.best(text,2,rate,n=12,post=post); a=expand_range(a,1.5)   # 12 дублей: в тесте важнее найти чистый
     aud.append(a/np.sqrt(np.mean(a[np.abs(a)>1e-4]**2))*10**(-20/20))
     print(text, f"{len(aud[-1])/SR:.2f} c", pitch_report(aud[-1]), "чистых дублей", V.last_info["clean"])
 # ---------- таймлайн ----------
@@ -61,7 +61,7 @@ N=200; TH=np.linspace(0,2*np.pi,N,endpoint=False)        # угол от вер�
 def ease(u): u=min(max(u,0),1); return u*u*(3-2*u)
 def shape_points(m, t, sx, sy):
     """m: 0 — лужица, 1 — капля. Локальные единицы: дно в y=0, радиус капли 1."""
-    rd=1+0.85*np.maximum(0,np.cos(TH))**3
+    rd=1+0.95*np.maximum(0,np.cos(TH))**8      # высокая степень — острый кончик капли
     dx,dy=rd*np.sin(TH),-1-rd*np.cos(TH)
     ax,by=2.4,0.26
     rp=1/np.sqrt((np.sin(TH)/ax)**2+(np.cos(TH)/by)**2)*(1+0.07*np.sin(3*TH+1)+0.05*np.sin(5*TH+2))
@@ -72,7 +72,7 @@ def shape_points(m, t, sx, sy):
     return x*sx, np.minimum(y*sy,0)
 def lerp(a,b,m): return a+(b-a)*m
 def draw_klyaks(t, m, sx, sy, blink, lid, gaze, vis, mstate):
-    S=2; R=150*S; P=1000; ox,oy=P//2,int(P*0.86)          # холст 2x, дно капли в (ox,oy)
+    S=2; R=150*S; P=1400; ox,oy=P//2,int(P*0.86)          # холст 2x с запасом на вытягивание, дно капли в (ox,oy)
     lay=Image.new("RGBA",(P,P),(0,0,0,0))
     x,y=shape_points(m,t,sx,sy); pts=list(zip(ox+x*R,oy+y*R))
     mask=Image.new("L",(P,P),0); ImageDraw.Draw(mask).polygon(pts,fill=255)
@@ -97,15 +97,18 @@ def draw_klyaks(t, m, sx, sy, blink, lid, gaze, vis, mstate):
             d.ellipse([gx-pr*0.75,gy-pry*0.75,gx-pr*0.3,gy-pry*0.3],fill=(255,250,235,255))
         # веко: прикрывает верх глаза, у правого чуть ниже — ехидство
         L=lid*(1.15 if side==1 else 0.85)
-        if L>0:
-            top=cy-ery-4; cut=cy-ery+2*ery*L; tilt=side*ery*0.25*L
-            d.polygon([(cx-er-6,top-40),(cx+er+6,top-40),(cx+er+6,cut+tilt),(cx-er-6,cut-tilt)],fill=BODY+(255,))
-            d.line([(cx-er-2,cut-tilt),(cx+er+2,cut+tilt)],fill=RIM+(255,),width=5)
+        if L>0 and blink>0.3:
+            cut=cy-ery+2*ery*L; tilt=side*ery*0.25*L
+            lm=Image.new("L",(P,P),0); ImageDraw.Draw(lm).polygon([(cx-er-8,cy-ery-8),(cx+er+8,cy-ery-8),(cx+er+8,cut+tilt),(cx-er-8,cut-tilt)],fill=255)
+            em=Image.new("L",(P,P),0); ImageDraw.Draw(em).ellipse([cx-er-3,cy-ery-3,cx+er+3,cy+ery+3],fill=255)
+            lay.paste(Image.new("RGBA",(P,P),BODY+(255,)),(0,0),ImageChops.multiply(lm,em))   # веко только внутри глаза
+            hw=er*math.sqrt(max(0.0,1-((cut-cy)/ery)**2)); d=ImageDraw.Draw(lay)
+            d.line([(cx-hw,cut-tilt*hw/er),(cx+hw,cut+tilt*hw/er)],fill=RIM+(255,),width=5)
     # рот: размеры плавно догоняют целевую форму
     shp,op=vis
     tgt={"X":(0.40,0.0),"B":(0.22,0.06),"C":(0.32,0.10+0.06*op),"D":(0.30,0.16+0.12*op),"E":(0.22,0.18),"F":(0.13,0.13)}[shp]
     mstate[0]+= (tgt[0]-mstate[0])*0.6; mstate[1]+=(tgt[1]-mstate[1])*0.6
-    mw,mh=mstate[0]*R*sx,mstate[1]*R*sy; mx,my=ox+0.04*R,oy+lerp(-0.13,-0.62,m)*R*sy
+    mw,mh=mstate[0]*R*sx*1.35,mstate[1]*R*sy*1.35; mx,my=ox+0.04*R,oy+lerp(-0.13,-0.62,m)*R*sy
     if mh<0.03*R:      # закрытый рот — кривая ухмылка, правый угол выше
         a=[(mx-mw/2+mw*k/12, my+math.sin(math.pi*k/12)*0.05*R-(k/12)*0.06*R) for k in range(13)]
         d.line(a,fill=MOUTH_LN+(255,),width=7,joint="curve")
