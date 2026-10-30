@@ -30,6 +30,9 @@ def viseme_at(tt):
     i=int(round((tt-T0)*FPS)); return vis[i] if 0<=i<len(vis) else ["X",0.0]
 # ---------- слои: вырезка с фона, совмещение «глаза закрыты» ----------
 base=cv2.imread(f"{adir}/ch01_base.png"); closed=cv2.imread(f"{adir}/ch01_eyes_closed.png")
+sys.path.insert(0, __import__("os").path.dirname(__file__))
+from folder_props import decorate
+base=decorate(base,f"{fontdir}/PTMono.ttf")          # наклейка, штамп и след от кружки на папке
 h0,w0=base.shape[:2]
 def align(src,dst,box):
     """Подобие (поворот+масштаб+сдвиг) src -> dst по особым точкам внутри box (x0,y0,x1,y1 в координатах dst)."""
