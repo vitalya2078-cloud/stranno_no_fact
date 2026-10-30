@@ -1,6 +1,6 @@
 """Ролик-сравнение вариантов одной реплики: каждый вариант с крупной подписью на экране, между ними пауза.
 Запуск: python3 -I line_variants.py <vosk_model_dir> <fonts_dir> <tools_dir> <variants.json> <out_dir> [фон.png]
-variants.json: {"title": "...", "variants": [{"label": "А", "note": "...", "phrases": [["текст", темп], пауза, ...],
+variants.json: {"title": "...", "variants": [{"label": "А", "note": "...", "phrases": [["текст", темп] | {"wav": путь, "text": текст}, пауза, ...],
                  "speaker_id": 4, "pitch_st": 0, "expand": null, "post": null, "takes": 10}]}"""
 import sys, json, subprocess, numpy as np, soundfile as sf, librosa
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
@@ -18,13 +18,16 @@ for v in CFG["variants"]:
     ch=[]; texts=[]
     for it in v["phrases"]:
         if isinstance(it,(int,float)): ch.append(np.zeros(int(it*SR),np.float32)); continue
+        if isinstance(it,dict):          # готовый файл другого синтезатора: {"wav": путь, "text": текст}
+            w,sr=sf.read(it["wav"],dtype="float32"); w=w if w.ndim==1 else w.mean(1)
+            ch.append(librosa.effects.trim(librosa.resample(w,orig_sr=sr,target_sr=SR),top_db=40)[0]); texts.append(it["text"]); continue
         a=V.best(it[0],v["speaker_id"],it[1],n=v.get("takes",10),post=post)
         if v.get("expand"): a=expand_range(a,v["expand"])
         ch.append(a); texts.append(it[0])
     a=np.concatenate(ch)
     if v.get("post")=="door": a=door(a)
     a=a/np.sqrt(np.mean(a[np.abs(a)>1e-4]**2))*10**(-20/20)
-    print(v["label"], " ".join(texts), f"{len(a)/SR:.2f} c", pitch_report(a), "чистых", V.last_info["clean"])
+    print(v["label"], " ".join(texts), f"{len(a)/SR:.2f} c", pitch_report(a))
     segs.append((t,a,v,"  ".join(texts))); t+=0.6+len(a)/SR+GAP     # 0,6 с подпись видна до начала звука
 TOTAL=t
 mix=np.zeros(int(TOTAL*SR)+SR,np.float32)
