@@ -55,6 +55,8 @@ M_BASE={k:align(rd(f"mouth_{k}"),base,FACE) for k in ("open_small","a","o")}
 puz=decorate(align(rd("puzzled"),base,BODY),f"{fontdir}/PTMono.ttf")   # поза другая: совмещаем по телу и папке
 M_PUZ={k:align(rd(f"puzzled_mouth_{k}"),puz,FACE) for k in ("open_small","a","o")}
 SHAPE2MOUTH={"B":"open_small","C":"open_small","D":"a","E":"o","F":"o"}
+# удивление: рот не закрывается до будничной линии — в паузах изумлённое «о», на гласных раскрыт шире
+SURPRISE_MOUTH={"X":"o","B":"o","C":"a","D":"a","E":"o","F":"o"}
 def soft(ell):
     m=np.zeros((h0,w0),np.float32)
     for e in ell: cv2.ellipse(m,e[:2],e[2:4],e[4] if len(e)>4 else 0,0,360,1.0,-1)
@@ -85,7 +87,7 @@ def face_state(tt):
     surprise=ramp(tt,s_on,s_on+0.1)*(1-ramp(tt,s_off,s_off+0.15))
     puzzle=ramp(tt,P[1][1]+0.5,P[1][1]+0.57)            # поднимает голову в паузе: почти мгновенно, чтобы не было двоения
     return surprise,puzzle
-BLINKS=[0.25,P[0][1]+0.15]
+BLINKS=[0.25,(P[0][0]+P[0][1])/2+0.3]     # не ближе 0,3 с к смене эмоции, иначе глаза двоятся
 def blink_amt(tt):
     for b in BLINKS:
         if b<=tt<b+0.16: return 1.0 if tt<b+0.10 else 0.5
@@ -96,13 +98,32 @@ def compose(tt):
     bl=blink_amt(tt)
     if bl: img=img*(1-EYES*bl)+closed*EYES*bl
     if surprise: img=img*(1-BROWS_EYES*surprise)+surpr*BROWS_EYES*surprise
-    if v[0]!="X": img=img*(1-MM_BASE)+M_BASE[SHAPE2MOUTH[v[0]]]*MM_BASE
+    if surprise>0.5: img=img*(1-MM_BASE)+M_BASE[SURPRISE_MOUTH[v[0]]]*MM_BASE
+    elif v[0]!="X": img=img*(1-MM_BASE)+M_BASE[SHAPE2MOUTH[v[0]]]*MM_BASE
     alpha=A_BASE.astype(np.float32)
     if puzzle:
         q=puz.astype(np.float32)
         if v[0]!="X": q=q*(1-MM_PUZ)+M_PUZ[SHAPE2MOUTH[v[0]]]*MM_PUZ
         img=img*(1-puzzle)+q*puzzle; alpha=alpha*(1-puzzle)+A_PUZ*puzzle
     return np.clip(img,0,255).astype(np.uint8), alpha.astype(np.uint8), v
+# ---------- взгляд: сдвиг радужки внутри глаза (контур и ресницы на месте) ----------
+EYE_BASE=[(372,557,48,36),(507,545,50,34)]; EYE_PUZ=[(408,530,48,34),(548,490,50,34)]
+def _eye_weight(eyes):
+    w=np.zeros((h0,w0),np.float32)
+    for cx,cy,rx,ry in eyes:
+        r=np.sqrt(((xx-cx)/rx)**2+((yy-cy)/ry)**2); u=np.clip((0.92-r)/0.4,0,1); w=np.maximum(w,u*u*(3-2*u))
+    return w
+def gaze_warp(img, eyes_w, dx, dy):
+    if abs(dx)<0.2 and abs(dy)<0.2: return img
+    return cv2.remap(img,(xx-dx*eyes_w).astype(np.float32),(yy-dy*eyes_w).astype(np.float32),cv2.INTER_LINEAR)
+def gaze(tt):
+    """Куда смотрит Марк (сдвиг радужки в пикселях картинки)."""
+    if tt<P[1][0]-0.12:                                   # читает: глаза бегут по строке и возвращаются к началу следующей
+        ph=((tt-0.2)*0.85)%1.0; return (-6+12*min(ph/0.85,1.0) if ph<0.85 else 6-12*(ph-0.85)/0.15, 2.0)
+    if tt<P[1][1]+0.5: return (0.0,-6.0)                  # удивление: взгляд вскидывается от папки
+    if tt<(P[2][0]+P[2][1])/2: return (1.5*math.sin(tt*3.0),0.0)    # растерянность: смотрит в сторону, думает
+    return (-9.0,4.0)                                     # «…первый день»: переводит взгляд к зрителю
+GZ=[0.0,0.0]
 # ---------- голова: мягкий поворот вокруг шеи ----------
 PIV=(500,770); yy,xx=np.mgrid[0:h0,0:w0].astype(np.float32)
 wgt=np.clip((815-yy)/(815-725),0,1); wgt=wgt*wgt*(3-2*wgt)
@@ -120,6 +141,7 @@ def pose(tt):
     ang+=4.0*env(tt,P[2][0]-0.2,P[2][1]+0.5,0.5)                                    # растерянность: медленный наклон набок
     ang+=0.8*math.sin(2*math.pi*0.6*tt)*env(tt,P[2][0],P[2][1],0.3)                  # и лёгкое покачивание, пока думает
     return ang,dy
+EW_BASE=_eye_weight(EYE_BASE); EW_PUZ=_eye_weight(EYE_PUZ)
 def background():
     bg=Image.open(f"{adir}/../BG-01/bg01_office.png").convert("RGB")
     k=max(W/bg.width,H/bg.height)*1.4; bg=bg.resize((int(bg.width*k)+1,int(bg.height*k)+1),Image.LANCZOS)
@@ -141,6 +163,8 @@ ff=subprocess.Popen(["ffmpeg","-y","-loglevel","error","-f","rawvideo","-pix_fmt
   "-c:a","aac","-b:a","192k","-ar","48000","-shortest","-movflags","+faststart",f"{out}/mark_emotions.mp4"],stdin=subprocess.PIPE)
 for i in range(int(TOTAL*FPS)):
     tt=i/FPS; img,alpha,v=compose(tt); ang,dy=pose(tt)
+    gx_,gy_=gaze(tt); GZ[0]+=(gx_-GZ[0])*0.45; GZ[1]+=(gy_-GZ[1])*0.45      # быстрый, но не мгновенный перевод взгляда
+    img=gaze_warp(img, EW_PUZ if face_state(tt)[1]>0.5 else EW_BASE, GZ[0], GZ[1])
     img=np.clip(img*SHADE,0,255).astype(np.uint8)
     rgba=head_warp(np.dstack([cv2.cvtColor(img,cv2.COLOR_BGR2RGB),alpha]),ang,dy)
     breath=1+0.006*math.sin(2*math.pi*0.25*tt)
