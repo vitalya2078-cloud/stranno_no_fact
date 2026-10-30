@@ -1,7 +1,8 @@
 """Проба Qwen3-TTS (Apache 2.0): VoiceDesign — голос и интонация по описанию; Base — клон голоса по образцу.
 Запуск (в отдельном окружении qwen-venv): python -I qwen_try.py <models_dir> <out_dir> <jobs.json>
 jobs.json: [{"name": "...", "text": "...", "instruct": "..."}                     — VoiceDesign
-            {"name": "...", "text": "...", "ref_audio": "a.wav", "ref_text": "..."}] — клон (Base)"""
+            {"name": "...", "text": "...", "ref_audio": "a.wav", "ref_text": "..."}] — клон (Base)
+необязательно "gen": {"temperature": 0.6, "top_p": 0.85} — меньше случайности, ровнее интонация"""
 import sys, json, time, torch, soundfile as sf
 from qwen_tts import Qwen3TTSModel
 mroot, out, jobs = sys.argv[1:4]
@@ -16,8 +17,8 @@ def model(kind):
 for j in json.load(open(jobs,encoding="utf-8")):
     t0=time.time()
     if "ref_audio" in j:
-        wavs,sr=model("Base").generate_voice_clone(text=j["text"], language="Russian", ref_audio=j["ref_audio"], ref_text=j["ref_text"], do_sample=True)
+        wavs,sr=model("Base").generate_voice_clone(text=j["text"], language="Russian", ref_audio=j["ref_audio"], ref_text=j["ref_text"], do_sample=True, **j.get("gen",{}))
     else:
-        wavs,sr=model("VoiceDesign").generate_voice_design(text=j["text"], language="Russian", instruct=j["instruct"], do_sample=True)
+        wavs,sr=model("VoiceDesign").generate_voice_design(text=j["text"], language="Russian", instruct=j["instruct"], do_sample=True, **j.get("gen",{}))
     sf.write(f"{out}/{j['name']}.wav", wavs[0], sr)
     print(f"{j['name']}: {len(wavs[0])/sr:.2f} c звука за {time.time()-t0:.0f} c", flush=True)
