@@ -11,6 +11,7 @@ from lipsync import visemes
 from loudness import normalize, measure
 from folder_props import decorate
 W,H,FPS=1080,1920,30
+CLEAN=__import__('os').environ.get('CLEAN')=='1'   # без служебных подписей (для монтажа)
 # ---------- голос: фразы и эмоция кадра для каждой ----------
 PHR=[("Жалоба: в Бюро не наступает полночь.",1.0,"calm"),("Заявитель — Бюро.",0.95,"surprised"),("Странно... Я здесь первый день.",0.88,"puzzled")]
 GAPS=[0.35,0.9]
@@ -212,8 +213,8 @@ for i in range(int(TOTAL*FPS)):
     if cur:
         lns=wrap(d,cur[-1],sub_f)[:2]; lh=84; y0=SUB_BOTTOM-lh*len(lns)
         for j,ln in enumerate(lns): d.text((W/2,y0+j*lh+lh/2),ln,font=sub_f,fill=(245,238,220),anchor="mm",stroke_width=5,stroke_fill=(10,8,20))
-    d.text((50,H-110),f"ТЕСТ · Марк, кадр 2 · эмоции · голос {vsrc.split(':')[0]}",font=lab_f,fill=(120,110,150))
-    d.text((50,H-68),f"рот: {v[0]}  {tt:4.1f} c",font=lab_f,fill=(120,110,150))
+    if not CLEAN: d.text((50,H-110),f"ТЕСТ · Марк, кадр 2 · эмоции · голос {vsrc.split(':')[0]}",font=lab_f,fill=(120,110,150))
+    if not CLEAN: d.text((50,H-68),f"рот: {v[0]}  {tt:4.1f} c",font=lab_f,fill=(120,110,150))
     ff.stdin.write(frame.tobytes())
 ff.stdin.close()
 if ff.wait(): sys.exit("ffmpeg завершился с ошибкой")

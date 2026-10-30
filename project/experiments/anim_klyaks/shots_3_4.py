@@ -11,6 +11,7 @@ from lipsync import visemes
 from loudness import normalize, measure
 from emphasis import words, emphasize
 W,H,FPS=1080,1920,30
+CLEAN=__import__('os').environ.get('CLEAN')=='1'   # без служебных подписей (для монтажа)
 # ---------- реплики и логическое ударение ----------
 LINES=[("kly01","Опять ты.",["опять"],[]),("mark04","Мы знакомы?",[],[]),
        ("kly02","Раз триста — сейчас спросишь, где кофе.",["триста","кофе"],["раз","сейчас","спросишь","где"])]
@@ -139,7 +140,7 @@ for i in range(int(TOTAL*FPS)):
     cur=[s for s in SUBS if s[0]-0.05<=t<=s[1]+0.15]
     if cur:
         d.text((W/2,1300),cur[-1][2],font=sub_f,fill=(245,238,220),anchor="mm",stroke_width=5,stroke_fill=(10,8,20))
-    d.text((50,H-110),"ТЕСТ · кадры 3–4 · Клякс",font=lab_f,fill=(120,110,150)); d.text((50,H-68),f"рот: {v[0]}  {t:4.1f} c",font=lab_f,fill=(120,110,150))
+    if not CLEAN: d.text((50,H-110),"ТЕСТ · кадры 3–4 · Клякс",font=lab_f,fill=(120,110,150)); d.text((50,H-68),f"рот: {v[0]}  {t:4.1f} c",font=lab_f,fill=(120,110,150))
     ff.stdin.write(pil.tobytes())
 ff.stdin.close()
 if ff.wait(): sys.exit("ffmpeg завершился с ошибкой")
