@@ -12,7 +12,7 @@ const TC = 2.6;   // момент схлопывания Солнца
 const starLayer = (seed: number, n: number) => { let s = seed; const r = () => ((s = (s * 16807) % 2147483647) / 2147483647);
   return Array.from({ length: n }, () => ({ x: r() * 1400 - 160, y: r() * 2300 - 190, r: 0.6 + r() * 1.8, ph: r() * 6.28 })); };
 const LAYERS = [starLayer(3, 260), starLayer(7, 120), starLayer(13, 40)];
-const Stars: React.FC<{ t: number; cx: number; cy: number }> = ({ t, cx, cy }) => (
+export const Stars: React.FC<{ t: number; cx: number; cy: number }> = ({ t, cx, cy }) => (
   <svg width={1080} height={1920} style={{ position: "absolute" }}>
     {LAYERS.map((L, k) => (
       <g key={k} transform={`translate(${-cx * (0.15 + k * 0.25)}, ${-cy * (0.15 + k * 0.25)})`}>
@@ -21,7 +21,7 @@ const Stars: React.FC<{ t: number; cx: number; cy: number }> = ({ t, cx, cy }) =
   </svg>
 );
 // ---------- туманность: шумовая текстура SVG (без картинок), медленный дрейф
-const Nebula: React.FC<{ t: number }> = ({ t }) => (
+export const Nebula: React.FC<{ t: number }> = ({ t }) => (
   <svg width={1080} height={1920} style={{ position: "absolute", opacity: 0.85 }}>
     <filter id="neb" x="0" y="0" width="100%" height="100%">
       <feTurbulence type="fractalNoise" baseFrequency="0.0016 0.0024" numOctaves={5} seed={4} />
@@ -38,7 +38,7 @@ const Nebula: React.FC<{ t: number }> = ({ t }) => (
 // ---------- диск аккреции: частицы по эллиптическим орбитам, горячее ближе к центру
 const DISK = (() => { let s = 21; const r = () => ((s = (s * 16807) % 2147483647) / 2147483647);
   return Array.from({ length: 420 }, () => ({ rad: 1.25 + Math.pow(r(), 1.7) * 2.6, ph: r() * 6.28, sz: 0.6 + r() * 2.2, sp: 0.7 + r() * 0.6 })); })();
-const BlackHole: React.FC<{ t: number; x: number; y: number; R: number; show: number }> = ({ t, x, y, R, show }) => {
+export const BlackHole: React.FC<{ t: number; x: number; y: number; R: number; show: number }> = ({ t, x, y, R, show }) => {
   if (show <= 0) return null;
   const back = DISK.map((p, i) => { const a = p.ph + t * p.sp * (2.2 / p.rad);
     return { i, px: x + Math.cos(a) * p.rad * R, py: y + Math.sin(a) * p.rad * R * 0.28, front: Math.sin(a) > 0, p }; });
