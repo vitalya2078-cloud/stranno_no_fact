@@ -9,12 +9,10 @@
 - **Собака: Бублик** — рыжая дворняга, светлая грудь и морда, одно ухо торчит, другое висит, хвост бубликом.
 - Эскизы: `concepts/src/Concepts.tsx`. Риги, лист персонажей, циклы ходьбы — этап 4 (после согласования).
 
-## Голос (подобран Claude по описаниям библиотеки ElevenLabs; на слух утверждает владелец)
-- Основной: **Aleksandr — Documentary Narrator** (voice_id JMT0QtVym2S8gHCkBqMp) — спокойный, уверенный, тёплый, чёткая дикция; доступен на бесплатном тарифе.
-- Запасные (тоже бесплатные): **Pavel — Warm Conversational Narrator** (VlCYpQzyafIQIhmvxR2w) — «умный друг объясняет»;
-  **Егор — Calm Narrator** — спокойный, чуть низкий, вдумчивый.
-- Не подходят на бесплатном тарифе (закрыты): Kostya, Aram, Isgandar, Andrey, Gleb.
-- Модель Eleven v3, без «возбуждённых» тегов; спокойный тон инструктора.
+## Голос (выбор владельца)
+- **Stanislav — Deep, Empathetic and Warm** (voice_id ogi2DyUAKJb7CEdqqvlU): глубокий, тёплый русский рассказчик; доступен на бесплатном тарифе.
+- Модель Eleven v3, спокойный тон инструктора, без «возбуждённых» тегов. Владелец генерирует на сайте и присылает mp3.
+- Запасные (бесплатные): Aleksandr — Documentary Narrator (JMT0QtVym2S8gHCkBqMp), Pavel — Warm Conversational Narrator (VlCYpQzyafIQIhmvxR2w).
 
 ## Палитры, стиль, субтитры
 — по навыку `.claude/skills/survival-shorts/SKILL.md` (день/ферма, ночь/блэкаут).
