@@ -3,3 +3,4 @@ out/
 checks/
 public/*.wav
 *.mp4
+style_*.png
