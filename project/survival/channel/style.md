@@ -10,9 +10,10 @@
 - Эскизы: `concepts/src/Concepts.tsx`. Риги, лист персонажей, циклы ходьбы — этап 4 (после согласования).
 
 ## Голос (подобран Claude по описаниям библиотеки ElevenLabs; на слух утверждает владелец)
-- Основной: **Kostya — Confident, Warm** (voice_id XL8iOqP8aIy6HGiJ4f6C) — «опытный товарищ», средний темп, практичные советы.
-- Запасные: **Aram — Coach, Deep & Grounded** (Dd5SDO8GiEVc2Od6pkuc) — тренер, спокойная уверенность;
-  **Pavel — Warm Conversational Narrator** (VlCYpQzyafIQIhmvxR2w) — самый популярный, «умный друг объясняет».
+- Основной: **Aleksandr — Documentary Narrator** (voice_id JMT0QtVym2S8gHCkBqMp) — спокойный, уверенный, тёплый, чёткая дикция; доступен на бесплатном тарифе.
+- Запасные (тоже бесплатные): **Pavel — Warm Conversational Narrator** (VlCYpQzyafIQIhmvxR2w) — «умный друг объясняет»;
+  **Егор — Calm Narrator** — спокойный, чуть низкий, вдумчивый.
+- Не подходят на бесплатном тарифе (закрыты): Kostya, Aram, Isgandar, Andrey, Gleb.
 - Модель Eleven v3, без «возбуждённых» тегов; спокойный тон инструктора.
 
 ## Палитры, стиль, субтитры
