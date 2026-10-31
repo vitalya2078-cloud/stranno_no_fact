@@ -63,7 +63,7 @@ export const makeIso = (S = 62, CX = 580, CY = 820) => {
       </>) : <polyline points={pts([[0, 10, 7], [0, 0, 7], [10, 0, 7]])} fill="none" stroke={A.rim} strokeWidth={3} />}
     </g>);
   };
-  const roomClip = pts([[0, 0, 0], [10, 0, 0], [10, 0, 7], [0, 0, 7], [0, 10, 7], [0, 10, 0], [10, 10, 0]]);
+  const roomClip = pts([[0, 10, 0], [0, 10, 7], [0, 0, 7], [10, 0, 7], [10, 0, 0], [10, 10, 0]]);   // контур комнаты (шестиугольник, без самопересечений)
   return { iso, pts, ring, Cube, Room, roomClip };
 };
 
