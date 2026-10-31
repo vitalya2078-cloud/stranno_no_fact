@@ -228,3 +228,82 @@ export const StyleC: React.FC = () => {
     </AbsoluteFill>
   );
 };
+
+// ===================================================================== D. ГИБРИД: бумажная диорама с подсветкой (изометрия A + бумага B)
+export const StyleD: React.FC = () => {
+  const t = useT();
+  const RX = 1.2, RY = 4.6;
+  const C = { wallL: "#efe2c8", wallR: "#e3d2b2", floor: "#d8c3a0", teal: "#2a7f8a", tealD: "#1f6670", tealDD: "#185158", coral: "#ff7a59", coralD: "#e2603f",
+    mustard: "#f2b134", mustD: "#d99a22", ink: "#1d2a33", rose: "#e85d75", cream: "#f7efe0" };
+  const edge = "rgba(29,42,51,0.18)";
+  return (
+    <AbsoluteFill style={{ background: "radial-gradient(circle at 50% 45%, #235a63 0%, #173f48 50%, #0d2a31 100%)" }}>
+      <svg width={W} height={H} style={{ position: "absolute", top: 70 }}>
+        <defs>
+          <filter id="pD" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="-6" dy="12" stdDeviation="8" floodColor="#0b1a1f" floodOpacity="0.35" /></filter>
+          <filter id="glowD" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="7" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+          <filter id="softD"><feGaussianBlur stdDeviation="30" /></filter>
+          <clipPath id="roomD"><polygon points={pts([[0, 0, 0], [10, 0, 0], [10, 0, 7], [0, 0, 7], [0, 10, 7], [0, 10, 0], [10, 10, 0]])} /></clipPath>
+        </defs>
+        {/* бумажная «коробка» комнаты: толстые срезы стен видны сверху */}
+        <g filter="url(#pD)">
+          <polygon points={pts([[0, 0, 0], [10, 0, 0], [10, 10, 0], [0, 10, 0]])} fill={C.floor} />
+          <polygon points={pts([[0, 0, 0], [0, 10, 0], [0, 10, 7], [0, 0, 7]])} fill={C.wallL} />
+          <polygon points={pts([[0, 0, 0], [10, 0, 0], [10, 0, 7], [0, 0, 7]])} fill={C.wallR} />
+          <polygon points={pts([[-0.35, -0.35, 7], [10, -0.35, 7], [10, 0, 7], [0, 0, 7], [0, 10, 7], [-0.35, 10, 7]])} fill={C.cream} stroke={edge} strokeWidth={2} />
+          <polygon points={pts([[10, -0.35, 0], [10, 0, 0], [10, 0, 7], [10, -0.35, 7]])} fill={C.mustD} />
+          <polygon points={pts([[-0.35, 10, 0], [0, 10, 0], [0, 10, 7], [-0.35, 10, 7]])} fill={C.mustD} />
+        </g>
+        {/* окно с ночным городом */}
+        <g filter="url(#pD)"><polygon points={pts([[5.6, 0, 2.6], [9, 0, 2.6], [9, 0, 5.8], [5.6, 0, 5.8]])} fill={C.teal} /></g>
+        <polygon points={pts([[5.8, 0, 2.8], [8.8, 0, 2.8], [8.8, 0, 5.6], [5.8, 0, 5.6]])} fill={C.tealDD} />
+        {Array.from({ length: 12 }, (_, i) => { const x = 6 + (i % 4) * 0.7, z = 3 + Math.floor(i / 4) * 0.7;
+          return <polygon key={i} points={pts([[x, 0, z], [x + 0.22, 0, z], [x + 0.22, 0, z + 0.25], [x, 0, z + 0.25]])} fill={i % 3 ? C.mustard : "#22525c"} filter={i % 3 ? "url(#glowD)" : undefined} />; })}
+        {/* ковёр, кровать, тумба, растение — бумажные блоки с тенями */}
+        <g filter="url(#pD)">
+          <polygon points={pts([[3, 3.5, 0.02], [8, 3.5, 0.02], [8, 8.5, 0.02], [3, 8.5, 0.02]])} fill={C.coral} />
+          <polygon points={pts([[3.4, 3.9, 0.04], [7.6, 3.9, 0.04], [7.6, 8.1, 0.04], [3.4, 8.1, 0.04]])} fill="none" stroke={C.cream} strokeWidth={4} strokeDasharray="10 10" />
+        </g>
+        <g filter="url(#pD)"><Cube x={5.2} y={0.2} z={0} w={4.4} d={3.2} h={1.1} top={C.teal} l={C.tealD} r={C.tealDD} edge={edge} /></g>
+        <g filter="url(#pD)"><Cube x={5.4} y={0.4} z={1.1} w={4.0} d={2.8} h={0.35} top={C.cream} l="#e6dccb" r="#d6cbb8" edge={edge} /></g>
+        <g filter="url(#pD)"><Cube x={5.8} y={0.5} z={1.45} w={1.6} d={1.0} h={0.45} top="#ffffff" l="#ece6da" r="#ddd5c6" edge={edge} /></g>
+        <g filter="url(#pD)"><Cube x={0.2} y={3.6} z={0} w={1.8} d={2.4} h={2.6} top={C.mustard} l={C.mustD} r="#c4861a" edge={edge} /></g>
+        <g filter="url(#pD)"><Cube x={0.4} y={8.2} z={0} w={1.0} d={1.0} h={1.0} top={C.coral} l={C.coralD} r="#c94f32" edge={edge} />
+          {[-2, -1, 0, 1, 2].map((i) => { const [x, y] = iso(0.9, 8.7, 1.0); return <ellipse key={i} cx={x + i * 16} cy={y - 50} rx={14} ry={50} fill={i % 2 ? "#3d9a6a" : "#2f8a5a"} transform={`rotate(${i * 18} ${x} ${y})`} />; })}</g>
+        {/* сигнал соседа — розовый, сквозь стену */}
+        <g clipPath="url(#roomD)" filter="url(#glowD)">
+          {[1, 2, 3, 4, 5].map((k) => { const r = ((k * 1.5 + t * 1.2) % 7.5) + 0.5;
+            return <path key={k} d={ring(4.2, -1.5, 2.2, r)} fill="none" stroke={C.rose} strokeWidth={6} opacity={0.85 * (1 - r / 8)} />; })}
+        </g>
+        {/* роутер и кот */}
+        <g filter="url(#pD)"><Cube x={RX - 0.6} y={RY - 0.7} z={2.6} w={1.2} d={1.4} h={0.32} top={C.ink} l="#152028" r="#0f171d" edge={edge} /></g>
+        {[-0.4, 0.4].map((d, i) => { const [x1, y1] = iso(RX - 0.3, RY + d, 2.92), [x2, y2] = iso(RX - 0.3, RY + d, 3.9);
+          return <line key={i} x1={x1} y1={y1} x2={x2 + (i ? 10 : -10)} y2={y2} stroke={C.ink} strokeWidth={8} strokeLinecap="round" />; })}
+        {[0, 0.3, 0.6].map((a, i) => <circle key={i} cx={iso(RX + 0.6, RY - 0.4 + a, 2.75)[0]} cy={iso(RX + 0.6, RY - 0.4 + a, 2.75)[1]} r={4.5} fill={C.mustard} filter="url(#glowD)" />)}
+        {(() => { const [cx, cy] = iso(RX, RY, 3.0); return (<g transform={`translate(${cx},${cy - 34})`} filter="url(#pD)">
+          <ellipse cx={0} cy={6} rx={88} ry={46} fill={C.coralD} />
+          <ellipse cx={-6} cy={-6} rx={70} ry={34} fill={C.coral} />
+          <circle cx={64} cy={-22} r={34} fill={C.coral} />
+          <path d="M44,-50 l8,-28 l16,22z M76,-52 l14,-24 l6,28z" fill={C.coral} />
+          <path d="M52,-22 q8,6 16,0 M74,-24 q8,6 16,0" fill="none" stroke={C.ink} strokeWidth={4} strokeLinecap="round" />
+          <path d="M-86,20 q-40,10 -30,60 q6,20 26,12" fill="none" stroke={C.coralD} strokeWidth={20} strokeLinecap="round" />
+        </g>); })()}
+        {/* наш Wi-Fi — тёплые горчичные кольца со свечением */}
+        <g clipPath="url(#roomD)" filter="url(#glowD)">
+          {[1.4, 3.0, 4.6].map((z, zi) => [0, 1, 2, 3, 4, 5].map((k) => { const r = ((k * 1.25 + t * 1.5) % 7.5) + 0.6;
+            return <path key={zi + "_" + k} d={ring(RX, RY, z, r)} fill="none" stroke={zi === 1 ? C.mustard : "#ffd27a"} strokeWidth={zi === 1 ? 6 : 3}
+              opacity={(zi === 1 ? 0.95 : 0.45) * (1 - r / 8.2)} />; }))}
+        </g>
+        <ellipse cx={iso(RX, RY, 3)[0]} cy={iso(RX, RY, 3)[1]} rx={240} ry={130} fill={C.mustard} opacity={0.16} filter="url(#softD)" />
+      </svg>
+      <div style={{ position: "absolute", left: 80, top: 140, display: "inline-block", padding: "14px 26px", background: C.mustard, color: C.ink,
+        fontFamily: G, fontWeight: 800, fontSize: 30, letterSpacing: 6, transform: "rotate(-2deg)", boxShadow: "0 8px 0 rgba(0,0,0,0.25)" }}>А ЧТО ЕСЛИ…</div>
+      <div style={{ position: "absolute", left: 80, top: 230, fontFamily: G, fontWeight: 800, fontSize: 92, lineHeight: 1.0, color: C.cream }}>Wi-Fi было<br />бы видно?</div>
+      <div style={{ position: "absolute", left: 90, right: 90, top: 1500, padding: "26px 30px", background: C.cream, transform: "rotate(-1.2deg)",
+        boxShadow: "0 14px 0 rgba(0,0,0,0.25)", textAlign: "center", fontFamily: G, fontWeight: 800, fontSize: 60, lineHeight: 1.15, color: C.ink }}>
+        Роутер соседа <span style={{ background: C.rose, color: C.cream, padding: "0 12px" }}>светит</span><br /><span style={{ opacity: 0.3 }}>тебе в подушку</span></div>
+      <Grain o={0.16} blend="multiply" />
+      <AbsoluteFill style={{ background: "radial-gradient(circle at 50% 45%, transparent 60%, rgba(0,0,0,0.35) 100%)" }} />
+    </AbsoluteFill>
+  );
+};
