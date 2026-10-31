@@ -59,7 +59,7 @@ const Bed: React.FC<{ mode: Mode; glowPillow?: number }> = ({ mode, glowPillow =
 
 // ===================================================================== СЦЕНЫ
 // 1. Хук: дом в разрезе — 4 квартиры, у каждой свой цвет сигнала, тонкий луч тянется к соседу
-const House: React.FC = () => {
+export const House: React.FC<{ strong?: boolean }> = ({ strong = false }) => {
   const t = useT();
   const cols = [A.glow, A.glow2, D.mustard, "#7dff9a"];
   const flats: [number, number][] = [[0, 0], [5, 0], [0, 5], [5, 5]];
@@ -75,6 +75,13 @@ const House: React.FC = () => {
     }))}
     {(() => { const a = iso(1, 2.1, 4.0), b = iso(6, 7.1, 0.6), k = ez(t, 3.6, 4.6);
       return <line x1={a[0]} y1={a[1]} x2={lerp(a[0], b[0], k)} y2={lerp(a[1], b[1], k)} stroke={A.glow} strokeWidth={5} filter="url(#glow)" />; })()}
+    {strong ? (() => { const a = iso(1, 7.1, 3.9), b = iso(6, 2.1, 0.5);        // обложка: жирный «воровской» луч из твоей квартиры к соседу
+      return (<g filter="url(#glow)">
+        <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={A.glow2} strokeWidth={26} opacity={0.45} />
+        <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke="#fff" strokeWidth={8} />
+        {[0.2, 0.45, 0.7].map((p, i) => <circle key={i} cx={lerp(a[0], b[0], p)} cy={lerp(a[1], b[1], p)} r={11} fill="#fff" />)}
+        <circle cx={b[0]} cy={b[1]} r={34} fill={A.glow2} opacity={0.8} /><circle cx={b[0]} cy={b[1]} r={16} fill="#fff" />
+      </g>); })() : null}
   </Stage>);
 };
 // 2–3. Спальня утром (D): кольца из коридора, кот на роутере; затем сквозь стену — розовый сигнал соседа
