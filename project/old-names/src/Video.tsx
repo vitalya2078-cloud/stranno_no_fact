@@ -86,7 +86,7 @@ const Street: React.FC<{ children?: React.ReactNode; cobble?: boolean }> = ({ ch
 </Stage>);
 
 // ===================================================================== СЦЕНЫ
-const S1: React.FC<{ end?: boolean }> = ({ end = false }) => {
+export const S1: React.FC<{ end?: boolean }> = ({ end = false }) => {
   const t = useT(); const t0 = end ? 70.3 : 3.4;
   const tx = lerp(15, 3.2, ez(t, t0, t0 + 1.7, (x) => 1 - Math.pow(1 - x, 3)));
   return <Street><Train x={tx} t={t} /><Tag x={2.0} y={4.0} z={4.6} text="МАШИНА" at={end ? 67.3 : 2.4} fs={40} /></Street>;
