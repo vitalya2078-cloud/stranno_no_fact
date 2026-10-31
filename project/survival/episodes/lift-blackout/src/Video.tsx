@@ -3,7 +3,10 @@
 import React from "react";
 import { AbsoluteFill, Audio, interpolate, staticFile, useCurrentFrame } from "remotion";
 import plan from "./plan.json";
-import { Captions, DAY, EASE, F, FPS, Grain, Hud, Mono, NIGHT, Ribbon, Transition, Tr, ez, phrases, useT } from "./kit";
+import { Captions, DAY, EASE, F, FPS, Grain, Hud, Mono, NIGHT, Ribbon, Transition, Tr, ez, insertPauses, phrases, useT } from "./kit";
+
+// паузы, вставленные в голос по просьбе владельца: после «тока нет» (0,4 с) и после «он так устроен» (0,25 с)
+insertPauses([[23.36, 0.4], [24.40, 0.25]]);
 import { SANYA } from "./rig";
 import { Bublik2, DOG_POSES, dogWalk, Hero2, POSES, walkPose, WALK_SPEED_PER_CYCLE } from "./rig2";
 
@@ -199,7 +202,7 @@ const SCENES: Scene[] = [
 ];
 const P = phrases(plan.groups);
 export const Video: React.FC = () => {
-  const f = useCurrentFrame(); const t = f / FPS;
+  const t = useT();
   const s = SCENES.find((x) => t >= x.t0 && t < x.t1) ?? SCENES[SCENES.length - 1];
   const k = interpolate(t, [s.t0, Math.min(s.t1, s.t0 + 8)], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   return (<AbsoluteFill style={{ background: `linear-gradient(${NIGHT.bg1}, ${NIGHT.bg2})`, overflow: "hidden" }}>

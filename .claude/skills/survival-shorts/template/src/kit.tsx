@@ -16,7 +16,14 @@ export const F = {
   hand: cav("normal", { weights: ["700"], subsets: ["cyrillic", "latin"] }).fontFamily,            // записи в блокноте
 };
 export const FPS = 30, W = 1080, H = 1920;
-export const useT = () => useCurrentFrame() / FPS;
+// Карта времени: если в голос вставили паузы, сцены остаются в «старых» секундах — timeMap.fn переводит реальное время в них.
+export const timeMap: { fn: (t: number) => number } = { fn: (t) => t };
+export const insertPauses = (cuts: [number, number][]) => {          // [[секунда_вставки_в_старом_времени, длительность], ...]
+  timeMap.fn = (t) => { let shift = 0;
+    for (const [at, d] of cuts) { if (t < at + shift) return t - shift; if (t < at + shift + d) return at; shift += d; }
+    return t - shift; };
+};
+export const useT = () => timeMap.fn(useCurrentFrame() / FPS);
 export const EASE = Easing.bezier(0.16, 1, 0.3, 1);                       // единственная «плавность» формата
 export const ez = (t: number, a: number, b: number) => interpolate(t, [a, b], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp", easing: EASE });
 export const px = (v: number) => Math.round(v);                            // целые пиксели для рамок и плашек
@@ -29,7 +36,7 @@ export type Tone = keyof typeof TONE;
 
 // ------------------------------------------------------------------ появление (spring, damping 14–20) и каскад
 export const useIn = (at: number, delay = 0) => {
-  const f = useCurrentFrame(); const { fps } = useVideoConfig();
+  const f = timeMap.fn(useCurrentFrame() / FPS) * FPS; const { fps } = useVideoConfig();
   return spring({ frame: f - Math.round((at + delay) * fps), fps, config: { damping: 16, stiffness: 170 } });
 };
 
