@@ -2,3 +2,4 @@ node_modules/
 out/
 checks/
 public/music.wav
+*.mp4
