@@ -2,7 +2,8 @@
 import React from "react";
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { Captions, DAY, F, Grain, Haze, Hud, Mono, NIGHT, Timer } from "./kit";
-import { Bublik, DOG_POSES, dogWalk, Hero, LEV, Look, POSES, Pose, SANYA, TIMUR, WALK_SPEED_PER_CYCLE, walkPose } from "./rig";
+import { LEV, Look, Pose, SANYA, TIMUR } from "./rig";
+import { Bublik2 as Bublik, DOG_POSES, dogWalk, Hero2 as Hero, POSES, WALK_SPEED_PER_CYCLE, walkPose } from "./rig2";
 
 const useT = () => useCurrentFrame() / 30;
 const Lbl: React.FC<{ x: number; y: number; text: string; c?: string; size?: number }> = ({ x, y, text, c = DAY.ink, size = 34 }) =>
