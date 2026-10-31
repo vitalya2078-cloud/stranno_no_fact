@@ -203,7 +203,7 @@ const Party: React.FC = () => {
       return <path key={k} d={`M${fx},${fy} q12,-8 24,0 q-12,8 -24,0 l-10,-7 l0,14z`} fill={D.coral} />; })}
     {t > 54.2 ? <ellipse cx={iso(1.1, 8.2, 2.4)[0]} cy={iso(1.1, 8.2, 2.4)[1]} rx={150 * ez(t, 54.2, 54.9)} ry={110 * ez(t, 54.2, 54.9)} fill="#0b1a1f" opacity={0.55} /> : null}
     <Router mode="D" x={8.2} y={8.4} z={0} />
-    <g opacity={fog}><Waves I={I} cx={8.8} cy={9.1} z={[0.8, 2.2, 3.6]} color={D.glow} t={t} max={13} n={10} id="party" fade={0.15} /></g>
+    <g opacity={fog}><Waves I={I} cx={8.8} cy={9.1} z={[1.0, 2.6]} color={D.glow} t={t} max={13} n={6} id="party" fade={0.15} /></g>
     <ellipse cx={iso(5, 5, 2)[0]} cy={iso(5, 5, 2)[1]} rx={420} ry={260} fill={D.mustard} opacity={0.18 * fog} filter="url(#soft)" />
     {/* призраки-гости: тёмные силуэты-тени, не персонажи */}
     {GHOSTS.map(([x, y], i) => { const [gx, gy] = iso(x, y, 0); const sw = Math.sin(t * 1.2 + i) * 6; const k = ez(t, 50.0 + i * 0.15, 50.6 + i * 0.15);
