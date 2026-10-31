@@ -73,7 +73,7 @@ description: "Делает вертикальный анимированный �
 - Звук: `node tools/music.mjs <длина+3> tense` → `tools/mix.sh public/voice.mp3 public/music.wav public/sfx.wav public/mix.wav <сек_поворота>`
   (музыка под голосом −24…−26 LUFS, сайдчейн, вырез 250–500 Гц, на повороте почти уходит; итог −14 LUFS, TP ≤ −1,5).
   Звуков максимум 4 на ролик (`script/sfx.json` → `python3 tools/sfx.py`).
-- Черновик: `npx remotion render src/index.ts Video out/draft.mp4 --browser-executable=$C --scale=0.67 --concurrency=4` (720p) и
+- Черновик: `npx remotion render src/index.ts Video out/draft.mp4 --browser-executable=$C --scale=0.5 --concurrency=4` (540×960) и
   контактный лист `tools/contact.sh out/draft.mp4 checks/contact.png`. **Сам найди 5 самых слабых мест и исправь до показа.**
 
 ## Стиль
