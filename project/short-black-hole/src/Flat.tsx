@@ -404,8 +404,9 @@ export const Flat: React.FC = () => {
       <AbsoluteFill style={{ background: "radial-gradient(circle at 50% 45%, transparent 60%, rgba(0,0,0,0.45) 100%)" }} />
       <Captions />
       <Audio src={staticFile(plan.voice)} />
+      <Audio src={staticFile("sfx.wav")} volume={0.45} />
       <Audio src={staticFile("music.wav")} loop
-        volume={(f) => interpolate(f, [0, 20, durationInFrames - 45, durationInFrames], [0, 0.11, 0.11, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })} />
+        volume={(f) => interpolate(f, [0, 20, durationInFrames - 45, durationInFrames], [0, 0.22, 0.22, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })} />
     </AbsoluteFill>
   );
 };

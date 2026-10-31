@@ -3,3 +3,4 @@ out/
 checks/
 public/music.wav
 *.mp4
+public/sfx.wav
