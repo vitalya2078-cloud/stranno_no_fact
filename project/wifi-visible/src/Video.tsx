@@ -187,7 +187,7 @@ const Explain: React.FC = () => {
   </AbsoluteFill>);
 };
 // 7. Вечеринка: гости — тёмные «призраки» в светящемся тумане, аквариум — кусок ночи
-const GHOSTS: [number, number][] = [[3.2, 3.2], [4.8, 5.6], [6.6, 3.8], [3.6, 7.6], [7.4, 6.8]];
+const GHOSTS: [number, number][] = [[3.2, 3.2], [3.0, 5.6], [7.2, 3.6], [3.6, 8.0], [8.0, 7.2]];
 const Party: React.FC = () => {
   const t = useT();
   const fog = ez(t, 45.2, 46.0);
@@ -203,7 +203,7 @@ const Party: React.FC = () => {
       return <path key={k} d={`M${fx},${fy} q12,-8 24,0 q-12,8 -24,0 l-10,-7 l0,14z`} fill={D.coral} />; })}
     {t > 54.2 ? <ellipse cx={iso(1.1, 8.2, 2.4)[0]} cy={iso(1.1, 8.2, 2.4)[1]} rx={150 * ez(t, 54.2, 54.9)} ry={110 * ez(t, 54.2, 54.9)} fill="#0b1a1f" opacity={0.55} /> : null}
     <Router mode="D" x={8.2} y={8.4} z={0} />
-    <g opacity={fog}><Waves I={I} cx={8.8} cy={9.1} z={[0.8, 2.2, 3.6]} color={D.glow} t={t} max={10} n={8} id="party" /></g>
+    <g opacity={fog}><Waves I={I} cx={8.8} cy={9.1} z={[0.8, 2.2, 3.6]} color={D.glow} t={t} max={13} n={10} id="party" fade={0.15} /></g>
     <ellipse cx={iso(5, 5, 2)[0]} cy={iso(5, 5, 2)[1]} rx={420} ry={260} fill={D.mustard} opacity={0.18 * fog} filter="url(#soft)" />
     {/* призраки-гости: тёмные силуэты-тени, не персонажи */}
     {GHOSTS.map(([x, y], i) => { const [gx, gy] = iso(x, y, 0); const sw = Math.sin(t * 1.2 + i) * 6; const k = ez(t, 50.0 + i * 0.15, 50.6 + i * 0.15);

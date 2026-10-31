@@ -68,13 +68,19 @@ export const makeIso = (S = 62, CX = 580, CY = 820) => {
 };
 
 // живые кольца сигнала/звука/тепла вокруг точки (cx,cy) на нескольких высотах
-export const Waves: React.FC<{ I: ReturnType<typeof makeIso>; cx: number; cy: number; z?: number[]; color: string; t: number; speed?: number; max?: number; n?: number; clip?: boolean; id?: string }> =
-  ({ I, cx, cy, z = [3], color, t, speed = 1.5, max = 7.5, n = 6, clip = true, id = "w" }) => (<>
+export const Waves: React.FC<{ I: ReturnType<typeof makeIso>; cx: number; cy: number; z?: number[]; color: string; t: number; speed?: number; max?: number; n?: number; clip?: boolean; id?: string; fade?: number }> =
+  ({ I, cx, cy, z = [3], color, t, speed = 1.5, max = 7.5, n = 6, clip = true, id = "w", fade = 0.55 }) => (<>
     {clip ? <defs><clipPath id={"clip" + id}><polygon points={I.roomClip} /></clipPath></defs> : null}
     <g clipPath={clip ? `url(#clip${id})` : undefined} filter="url(#glow)">
       {z.map((zz, zi) => Array.from({ length: n }, (_, k) => { const r = ((k * (max / n) + t * speed) % max) + 0.5;
         const main = zi === Math.floor(z.length / 2);
-        return <path key={zi + "_" + k} d={I.ring(cx, cy, zz, r)} fill="none" stroke={color} strokeWidth={main ? 6 : 3} opacity={(main ? 0.95 : 0.45) * (1 - r / (max + 0.7))} />; }))}
+        const op = (main ? 0.95 : 0.5) * (1 - fade * (r / max));           // затухание с расстоянием (fade 0 — все кольца одинаково яркие)
+        const d = I.ring(cx, cy, zz, r);
+        return (<g key={zi + "_" + k}>
+          {/* тёмная подложка: на светлых стенах/полу (стиль D) кольцо читается одинаково со всех сторон */}
+          {color === D.glow ? <path d={d} fill="none" stroke="#b5700f" strokeWidth={main ? 10 : 6} opacity={op * 0.45} /> : null}
+          <path d={d} fill="none" stroke={color} strokeWidth={main ? 6 : 3} opacity={op} />
+        </g>); }))}
     </g></>);
 
 // ------------------------------------------------------------------ фон сцены, зерно, виньетка
