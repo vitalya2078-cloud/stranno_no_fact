@@ -4,3 +4,4 @@ checks/
 public/*.wav
 *.mp4
 *.png
+out/
