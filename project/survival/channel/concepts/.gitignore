@@ -1,0 +1,6 @@
+node_modules
+out/
+checks/
+public/*.wav
+*.mp4
+*.png
